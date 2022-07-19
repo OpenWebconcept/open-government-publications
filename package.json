@@ -1,0 +1,64 @@
+{
+  "name": "open-government-publications",
+  "version": "1.0.0",
+  "description": "Open Government Publications",
+  "private": true,
+  "author": "",
+  "wordpress": {
+    "tested": "6.1",
+    "required": "5.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.16.5",
+    "@babel/preset-env": "^7.16.5",
+    "@babel/preset-react": "^7.16.5",
+    "are-you-es5": "^2.1.2",
+    "autoprefixer": "^10.4.1",
+    "babel-loader": "^8.2.3",
+    "browser-sync": "^2.12.8",
+    "core-js": "^3.20.2",
+    "cross-env": "^7.0.3",
+    "css-loader": "^6.5.1",
+    "del": "^3.0.0",
+    "es6-promise": "^3.2.1",
+    "eslint": "^7.32.0",
+    "eslint-config-standard": "^16.0.3",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^5.1.1",
+    "jshint": "^2.13.0",
+    "mini-css-extract-plugin": "^2.4.5",
+    "node-sass": "^7.0.0",
+    "postcss-loader": "^6.2.1",
+    "postcss-preset-env": "^7.2.0",
+    "sass-loader": "^12.4.0",
+    "style-loader": "^3.3.1",
+    "webpack": "^5.38.1",
+    "webpack-cli": "^4.7.2"
+  },
+  "scripts": {
+    "build": "cross-env ENV=development WATCH=false webpack --config assets/webpack.config.js",
+    "build:prod": "cross-env ENV=production WATCH=false webpack --config assets/webpack.config.js",
+    "watch": "cross-env ENV=development WATCH=true webpack --config assets/webpack.config.js"
+  },
+  "dependencies": {},
+  "browserslist": [
+    "defaults",
+    "not ie < 11",
+    "Firefox > 76",
+    "Chrome >= 87",
+    "Edge >= 80",
+    "last 5 Safari major versions",
+    "last 5 samsung major versions",
+    "last 2 versions",
+    "> 1%",
+    "iOS 7",
+    "last 3 iOS versions"
+  ],
+  "postcss": {
+    "plugins": {
+      "postcss-preset-env": {},
+      "autoprefixer": {}
+    }
+  }
+}
