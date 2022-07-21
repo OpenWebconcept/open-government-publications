@@ -10,7 +10,7 @@ namespace SudwestFryslan\OpenGovernmentPublications;
 class Service
 {
     private $service;
-    private $query               = array();
+    private $query               = [];
 
     private $offset              = 1;
     private $max_records         = 10;
@@ -79,7 +79,7 @@ class Service
 
         // Check if field is key and not an array
         if (!is_array($field)) {
-            $field = array($field => $value);
+            $field = [$field => $value];
         }
 
         // Overwrite the query
@@ -221,7 +221,7 @@ class Service
         // Check if field is array
         if ($this->is_field_array($fieldname)) {
             // Set empty results
-            $results = array();
+            $results = [];
 
             // Get parent fields
             $parent_fields = $this->get_field($fieldname, false);
@@ -256,7 +256,7 @@ class Service
     public function get_query_string()
     {
         // Set queries array
-        $queries = array();
+        $queries = [];
 
         if (!empty($this->query)) {
             foreach ($this->query as $field => $value) {
@@ -309,11 +309,11 @@ class Service
         $base_url       = $this->get_base_url();
 
         // Set the query args
-        $args           = array(
+        $args           = [
             $this->get_field('startRecord')     => $this->offset,
             $this->get_field('maximumRecords')  => $this->max_records,
             $this->get_field('query')           => $this->get_query_string(),
-        );
+        ];
 
         // Set the request url
         $request_url = add_query_arg($args, $base_url);
@@ -347,10 +347,10 @@ class Service
         $curl = curl_init();
 
         // Set some options - we are passing in a useragent too here
-        curl_setopt_array($curl, array(
+        curl_setopt_array($curl, [
         CURLOPT_RETURNTRANSFER  => 1,
         CURLOPT_URL             => $this->get_encoded_url($url),
-        ));
+        ]);
 
         // Send the request & save response to $response
         $response = curl_exec($curl);
@@ -370,19 +370,19 @@ class Service
         $records    = $this->get_mapping_item('records');
 
         // Return pagination array
-        return array(
+        return [
             'max_num_records'   => $this->get_mapping_item('numberOfRecords', false, true),
             'total_found'       => $this->total_found,
             'first_item'        => $this->offset,
             'last_item'         => (count($records) - 1) + $this->offset
-        );
+        ];
     }
 
     public function get_mapped_results()
     {
 
         // Set empty results array
-        $results    = array();
+        $results    = [];
 
         // Get the request url
         $url        = $this->get_request_url();
@@ -420,7 +420,7 @@ class Service
     {
 
         // Set empty results array
-        $results    = array();
+        $results    = [];
 
         // Get the request url
         $url        = $this->get_request_url();
@@ -457,13 +457,13 @@ class Service
         $updated_at = $this->get_mapping_item('updated_at', $record, true);
 
         // Return the record
-        return array(
+        return [
             'identifier'    => $this->get_mapping_item('identifier', $record, true),
             'title'         => $this->get_mapping_item('title', $record, true),
             'permalink'     => $this->get_mapping_item('permalink', $record, true),
             'meta'          => $this->get_mapping_item('meta', $record, true),
             'created_at'    => date('Y-m-d', strtotime($created_at)),
             'updated_at'    => date('Y-m-d', strtotime($updated_at)),
-        );
+        ];
     }
 }

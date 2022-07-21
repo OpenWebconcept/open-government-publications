@@ -19,13 +19,13 @@ class Import implements ServiceProviderInterface
     public function register()
     {
         // Plan the import task
-        add_action('open_govpub_check_import_publications', array($this, 'check_import_publications'));
+        add_action('open_govpub_check_import_publications', [$this, 'check_import_publications']);
 
         // Run the import task
-        add_action('open_govpub_task_import_publications', array($this, 'run_import_publications'));
+        add_action('open_govpub_task_import_publications', [$this, 'run_import_publications']);
 
         // Set the ajax import action
-        add_action('wp_ajax_import_open_govpub', array($this, 'import_open_govpub_data'));
+        add_action('wp_ajax_import_open_govpub', [$this, 'import_open_govpub_data']);
     }
 
     public function get_service_last_date($src_id, $last_dates = false, $default = '1990-01-01')
@@ -48,7 +48,7 @@ class Import implements ServiceProviderInterface
     {
         // Get previous last dates
         $last_dates = get_open_govpub_option('last_import_dates');
-        $last_dates = ($last_dates && is_array($last_dates) ? $last_dates : array());
+        $last_dates = ($last_dates && is_array($last_dates) ? $last_dates : []);
 
         // Get all current imports
         $current_imports = get_open_govpub_option('current_import');
@@ -82,11 +82,11 @@ class Import implements ServiceProviderInterface
         if ($creator && !empty($creator)) {
             // Get services config
             $services       = get_open_govpub_service_config();
-            $current_import = array();
+            $current_import = [];
             $max_items      = $total_items = 0;
 
             // Set default query args
-            $query          = array( 'creator' => $creator );
+            $query          = [ 'creator' => $creator ];
 
             // Set offset and max records
             $offset         = $this->limit_import;
@@ -98,10 +98,10 @@ class Import implements ServiceProviderInterface
                 $last_date = $this->get_service_last_date($service_id, $last_dates);
 
                 // Set the service query args
-                $query['created_at'] = array(
+                $query['created_at'] = [
                     'value'             => date_i18n('Y-m-d', strtotime($last_date)),
                     'compare'           => '>='
-                );
+                ];
 
                 // Load the service
                 $service = new Service($the_service);
@@ -120,12 +120,12 @@ class Import implements ServiceProviderInterface
                     // Check if any items found
                     if ($found_items > 0) {
                         // Add the current service item
-                        $current_import[$service_id] = array(
+                        $current_import[$service_id] = [
                             'status'        => 0,
                             'max_num'       => $found_items,
                             'total_found'   => $total_found,
                             'date_offset'   => $last_date
-                        );
+                        ];
 
                         // Add found items count to total
                         $max_items      += $found_items;
@@ -135,15 +135,15 @@ class Import implements ServiceProviderInterface
             }
 
             // Return the results
-            return array(
+            return [
                 'current_import'    => $current_import,
-                'total_import'      => array(
+                'total_import'      => [
                     'status'            => 0,
                     'max_num'           => $max_items,
                     'total_num'         => $total_items,
                     'import_date'       => date_i18n('Y-m-d H:i:s')
-                )
-            );
+                ]
+            ];
         }
 
         return false;
@@ -202,10 +202,10 @@ class Import implements ServiceProviderInterface
                 $services = get_open_govpub_service_config();
 
                 // Return the service
-                return array(
+                return [
                     'service_id'    => $service_id,
                     'service'       => $services[$service_id]
-                ) + $c_import;
+                ] + $c_import;
             }
         }
 
@@ -257,10 +257,10 @@ class Import implements ServiceProviderInterface
             $desc       = (isset($service['desc']) ? $service['desc'] : '');
 
             // Create the term
-            $term = wp_insert_term($title, 'open_govpub_type', array(
+            $term = wp_insert_term($title, 'open_govpub_type', [
                 'description'   => $desc,
                 'slug'          => $service_slug,
-            ));
+            ]);
 
             // Return the just created term id
             return ( $term && isset($term['term_id']) ? $term['term_id'] : false );
@@ -280,16 +280,16 @@ class Import implements ServiceProviderInterface
         $post_id    = false;
 
         // Set query args
-        $args       = array(
+        $args       = [
             'post_type'     =>  'open_govpub',
-            'meta_query'    =>  array(
-                array(
+            'meta_query'    =>  [
+                [
                     'key'   => 'open_govpub_identifier',
                     'value' => $identifier
-                )
-            ),
+                ]
+            ],
             'posts_per_page' => 1
-        );
+        ];
 
         // Setup WP_Query object by identifier
         $the_query = new WP_Query($args);
@@ -313,13 +313,13 @@ class Import implements ServiceProviderInterface
     {
 
         // Return the post data array
-        return array(
+        return [
             'post_title'    => wp_strip_all_tags($result['title']),
             'post_date'     => $result['created_at'],
             'post_modified' => $result['updated_at'],
             'post_type'     => 'open_govpub',
             'post_status'   => 'publish'
-        );
+        ];
     }
 
     public function save_govpub_post_meta($post_id, $result, $service_slug)
@@ -341,7 +341,7 @@ class Import implements ServiceProviderInterface
     public function save_govpub_search_meta($post_id, $result, $post_data)
     {
 
-        $search_meta = array();
+        $search_meta = [];
 
         // If post title available, add it
         if (isset($post_data['post_title'])) {
@@ -447,13 +447,13 @@ class Import implements ServiceProviderInterface
             $service_id     = $import_service['service_id'];
 
             // Set query
-            $query          = array(
+            $query          = [
                 'creator'       => $creator,
-                'created_at'        => array(
+                'created_at'        => [
                     'value'         => date_i18n('Y-m-d', strtotime($import_service['date_offset'])),
                     'compare'       => '>='
-                )
-            );
+                ]
+            ];
 
             // Load the service
             $service = new Service($the_service);
@@ -478,13 +478,13 @@ class Import implements ServiceProviderInterface
                 $saved_i = $this->save_govpub_posts($results['data'], $service_id);
 
                 // The results
-                return array(
+                return [
                     'imported'          => $saved_i,
                     'max_num_records'   => $results['pagination']['max_num_records'],
                     'total_found'       => $results['pagination']['total_found'],
                     'date_offset'       => $import_service['date_offset'],
                     'last_record_date'  => $last_record_date
-                );
+                ];
             }
         }
 
@@ -531,13 +531,13 @@ class Import implements ServiceProviderInterface
                         $max_results    = $results['max_num_records'];
 
                         // Create new status array
-                        $new_status = array(
+                        $new_status = [
                             'status'            => $imported_i,
                             'max_num'           => $max_results,
                             'total_found'       => $results['total_found'],
                             'date_offset'       => $results['date_offset'],
                             'last_record_date'  => $results['last_record_date']
-                        );
+                        ];
 
                         // Update the new status
                         update_open_govpub_sub_option('current_import', $service['service_id'], $new_status);
@@ -567,9 +567,9 @@ class Import implements ServiceProviderInterface
     {
 
         // Set default result
-        $results = array(
+        $results = [
             'status' => 'done'
-        );
+        ];
 
         // Check if not allready checked for needed update
         if (!isset($_REQUEST['checked']) || $_REQUEST['checked'] == 0) {
@@ -587,12 +587,12 @@ class Import implements ServiceProviderInterface
             $progress   = floor($progress * 10000) / 100; // Floor 2 decimals
 
             // Set results
-            $results    = array(
+            $results    = [
                 'status'        => 'running',
                 'progress'      => $progress,
                 'details'       => $total_import,
                 'import_string' => get_open_govpub_current_import_string()
-            );
+            ];
         }
 
         header('Content-Type: application/json');

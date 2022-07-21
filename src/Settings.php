@@ -14,9 +14,9 @@ class Settings implements ServiceProviderInterface
     }
     public function register()
     {
-        add_action('admin_init', array($this, 'add_settings'));
-        add_action('admin_notices', array($this, 'add_reset_notice'));
-        add_action('wp_ajax_reset_open_govpub', array($this, 'reset_open_govpub_data'));
+        add_action('admin_init', [$this, 'add_settings']);
+        add_action('admin_notices', [$this, 'add_reset_notice']);
+        add_action('wp_ajax_reset_open_govpub', [$this, 'reset_open_govpub_data']);
     }
 
     public function add_settings()
@@ -28,7 +28,7 @@ class Settings implements ServiceProviderInterface
         add_settings_section(
             'open_govpub_settings_section',
             __('Algemeen', 'open-govpub'),
-            array($this, 'section_intro'),
+            [$this, 'section_intro'],
             'open_govpub'
         );
 
@@ -36,7 +36,7 @@ class Settings implements ServiceProviderInterface
         add_settings_field(
             'creator',
             __('Publicerende organisatie', 'open-govpub'),
-            array($this, 'creator_field_render'),
+            [$this, 'creator_field_render'],
             'open_govpub',
             'open_govpub_settings_section'
         );
@@ -50,7 +50,7 @@ class Settings implements ServiceProviderInterface
     {
         // Get available creators
         $organizations = get_option('open_govpub_organization');
-        $options = (is_array($organizations) ? $organizations : array());
+        $options = (is_array($organizations) ? $organizations : []);
 
         // Set the values as keys
         $options = array_combine($options, $options);
@@ -173,10 +173,10 @@ class Settings implements ServiceProviderInterface
     {
 
         // Set args
-        $args = array(
+        $args = [
             'post_type'         => 'open_govpub',
             'posts_per_page'    => 100
-        );
+        ];
 
         // Set delete iteration
         $deleted_i = 0;
@@ -206,9 +206,9 @@ class Settings implements ServiceProviderInterface
         // Reset the postdata
         wp_reset_postdata();
 
-        return array(
+        return [
             'deleted_i' => $deleted_i,
             'max_items' => $max_items
-        );
+        ];
     }
 }

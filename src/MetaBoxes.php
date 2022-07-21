@@ -14,7 +14,7 @@ class MetaBoxes implements ServiceProviderInterface
     public function register()
     {
         // Register the meta boxes
-        add_action('add_meta_boxes', array($this, 'register_meta_boxes'));
+        add_action('add_meta_boxes', [$this, 'register_meta_boxes']);
     }
 
     public function register_meta_boxes()
@@ -24,7 +24,7 @@ class MetaBoxes implements ServiceProviderInterface
         add_meta_box(
             'opengovpub-meta-box',
             __('Metadata'),
-            array($this, 'render_meta_box'),
+            [$this, 'render_meta_box'],
             'open_govpub',
             'normal',
             'default'
@@ -34,7 +34,7 @@ class MetaBoxes implements ServiceProviderInterface
         add_meta_box(
             'opengovpub-search-meta-box',
             __('Search string'),
-            array($this, 'render_search_meta_box'),
+            [$this, 'render_search_meta_box'],
             'open_govpub',
             'normal',
             'default'

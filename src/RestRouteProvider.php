@@ -24,22 +24,22 @@ class RestRouteProvider implements ServiceProviderInterface
 
     public function register()
     {
-        add_action('rest_api_init', array($this, 'registerRestRoutes'), 10);
+        add_action('rest_api_init', [$this, 'registerRestRoutes'], 10);
     }
 
     public function registerRestRoutes()
     {
-        register_rest_route($this->namespace, '/types', array(
+        register_rest_route($this->namespace, '/types', [
             'methods'   => 'GET',
-            'callback'  => array($this, 'getTypes'),
+            'callback'  => [$this, 'getTypes'],
             'args'      => get_open_govpub_types_api_args()
-        ));
+        ]);
 
-        register_rest_route($this->namespace, '/search', array(
+        register_rest_route($this->namespace, '/search', [
             'methods'   => 'GET',
-            'callback'  => array($this, 'search'),
+            'callback'  => [$this, 'search'],
             'args'      => get_open_govpub_search_api_args()
-        ));
+        ]);
     }
 
     public function getTypes(WP_REST_Request $request): WP_REST_Response

@@ -11,14 +11,13 @@ class AdminMenu implements ServiceProviderInterface
         $this->container = $container;
     }
 
-    public function register()
+    public function register(): void
     {
-        add_action('admin_menu', array($this, 'add_admin_pages'), 10);
+        add_action('admin_menu', [$this, 'addPages'], 10);
     }
 
-    public function add_admin_pages()
+    public function addPages(): void
     {
-        // Add import option to the menu
         add_submenu_page(
             'edit.php?post_type=open_govpub',
             __('Open Government Publications - import', 'open-govpub'),
@@ -28,38 +27,32 @@ class AdminMenu implements ServiceProviderInterface
             fn() => require $this->container->get('plugin.path') . '/views/admin/view-open-govpub-import.php'
         );
 
-        // Add the settings page to the menu
         add_submenu_page(
             'edit.php?post_type=open_govpub',
             __('Open Government Publications - settings', 'open-govpub'),
             __('Settings', 'open-govpub'),
             'manage_options',
             'open-govpub-settings',
-            array($this, 'show_settings_page')
+            [$this, 'getSettingsPage']
         );
     }
 
-    public function show_settings_page()
+    public function getSettingsPage(): void
     {
+        $currentTab = sanitize_text_field($_GET['tab'] ?? '');
 
-        // Get the current tab
-        $c_tab = (isset($_GET['tab']) ? sanitize_text_field($_GET['tab']) : false);
-
-        if ($c_tab == 'reset') {
+        if ($currentTab == 'reset') {
             // Get current rest action
             $c_reset = (isset($_GET['reset']) ? sanitize_text_field($_GET['reset']) : '');
 
-            // Include the reset view
             require $this->container->get('plugin.path') . '/views/admin/view-open-govpub-reset.php';
-        } elseif ($c_tab == 'endpoints') {
+        } elseif ($currentTab == 'endpoints') {
             // Get the api args
-            $search_args    = get_open_govpub_search_api_args();
-            $types_args     = get_open_govpub_types_api_args();
+            $search_args = get_open_govpub_search_api_args();
+            $types_args = get_open_govpub_types_api_args();
 
-            // require the endpoints view
             require $this->container->get('plugin.path') . '/views/admin/view-open-govpub-endpoints.php';
         } else {
-            // require the settings view
             require $this->container->get('plugin.path') . '/views/admin/view-open-govpub-settings.php';
         }
     }

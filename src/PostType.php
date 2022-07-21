@@ -13,8 +13,8 @@ class PostType implements ServiceProviderInterface
 
     public function register()
     {
-        add_action('init', array($this, 'registerPostType'), 10);
-        add_action('init', array($this, 'registerTaxonomy'), 10);
+        add_action('init', [$this, 'registerPostType'], 10);
+        add_action('init', [$this, 'registerTaxonomy'], 10);
     }
 
     public function registerPostType()
@@ -24,7 +24,7 @@ class PostType implements ServiceProviderInterface
             $capabilities = [];
         }
 
-        $labels = array(
+        $labels = [
             'name'                => __('Open Government Publications', 'open-govpub'),
             'singular_name'       => __('Open Government Publications', 'open-govpub'),
             'menu_name'           => __('Open Publications', 'open-govpub'),
@@ -38,15 +38,15 @@ class PostType implements ServiceProviderInterface
             'search_items'        => __('Search Open Government Publication', 'open-govpub'),
             'not_found'           => __('Not Found', 'open-govpub'),
             'not_found_in_trash'  => __('Not found in Trash', 'open-govpub'),
-        );
+        ];
 
-        $args = array(
+        $args = [
             'label'               => __('Open Government Publications', 'open-govpub'),
             'description'         => __('Open Government Publications', 'open-govpub'),
             'labels'              => $labels,
-            'supports'            => array(
+            'supports'            => [
                 'title'
-            ),
+            ],
             'hierarchical'          => false,
             'public'                => false,
             'show_ui'               => true,
@@ -61,7 +61,7 @@ class PostType implements ServiceProviderInterface
             'publicly_queryable'    => false,
             'capability_type'       => 'page',
             'capabilities'          => $capabilities,
-        );
+        ];
 
         // Registering Custom Post Type
         register_post_type('open_govpub', $args);
@@ -69,7 +69,7 @@ class PostType implements ServiceProviderInterface
 
     public function registerTaxonomy()
     {
-        $labels = array(
+        $labels = [
             'name'              => __('Type', 'open-govpub'),
             'singular_name'     => __('Type', 'open-govpub'),
             'search_items'      => __('Search Types', 'open-govpub'),
@@ -81,14 +81,14 @@ class PostType implements ServiceProviderInterface
             'add_new_item'      => __('Add New Type', 'open-govpub'),
             'new_item_name'     => __('New Type Name', 'open-govpub'),
             'menu_name'         => __('Types', 'open-govpub'),
-        );
+        ];
 
-        register_taxonomy('open_govpub_type', 'open_govpub', array(
+        register_taxonomy('open_govpub_type', 'open_govpub', [
             'hierarchical'      => true,
             'labels'            => $labels,
             'show_ui'           => true,
             'show_admin_column' => true,
             'query_var'         => true
-        ));
+        ]);
     }
 }
