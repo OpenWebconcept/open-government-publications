@@ -26,7 +26,7 @@ class Plugin
 
     public function boot()
     {
-        $this->container->get(Api::class)->register();
+        $this->container->get(RestRouteProvider::class)->register();
         $this->container->get(Init::class)->register();
         $this->container->get(Import::class)->register();
         $this->container->get(PostType::class)->register();

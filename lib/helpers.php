@@ -179,7 +179,6 @@ function get_open_govpub_option($option_name, $sub_item = false, $default = null
 
 function get_open_govpub_types_api_args()
 {
-
     return array(
         'hide_empty'   => array(
             'type'              => 'integer',
