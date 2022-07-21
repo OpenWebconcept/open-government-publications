@@ -36,7 +36,8 @@
         "phplint": "phplint",
         "phpcompatibility": "phpcs",
         "check-style": "phpcs -p --standard=PSR12 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src tests",
-        "fix-style": "phpcbf -p --standard=PSR12 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src tests"
+        "fix-style": "phpcbf -p --standard=PSR12 --runtime-set ignore_errors_on_exit 1 --runtime-set ignore_warnings_on_exit 1 src tests",
+        "fix-rule": "phpcbf -p --standard=Generic --sniffs=Generic.PHP.LowerCaseConstant src"
     },
     "autoload": {
         "psr-4": {

@@ -1,16 +1,9 @@
 <?php
 
-namespace SudwestFryslan\OpenGovernmentPublications;
+namespace SudwestFryslan\OpenGovernmentPublications\Providers;
 
-class PostType implements ServiceProviderInterface
+class PostTypeProvider extends ServiceProvider
 {
-    protected Container $container;
-
-    public function __construct(Container $container)
-    {
-        $this->container = $container;
-    }
-
     public function register()
     {
         add_action('init', [$this, 'registerPostType'], 10);
@@ -19,11 +12,6 @@ class PostType implements ServiceProviderInterface
 
     public function registerPostType()
     {
-        $capabilities = ['create_posts' => 'do_not_allow'];
-        if (defined('WP_DEBUG') && WP_DEBUG) {
-            $capabilities = [];
-        }
-
         $labels = [
             'name'                => __('Open Government Publications', 'open-govpub'),
             'singular_name'       => __('Open Government Publications', 'open-govpub'),
@@ -44,9 +32,7 @@ class PostType implements ServiceProviderInterface
             'label'               => __('Open Government Publications', 'open-govpub'),
             'description'         => __('Open Government Publications', 'open-govpub'),
             'labels'              => $labels,
-            'supports'            => [
-                'title'
-            ],
+            'supports'            => ['title'],
             'hierarchical'          => false,
             'public'                => false,
             'show_ui'               => true,
@@ -60,10 +46,9 @@ class PostType implements ServiceProviderInterface
             'exclude_from_search'   => true,
             'publicly_queryable'    => false,
             'capability_type'       => 'page',
-            'capabilities'          => $capabilities,
+            'capabilities'          => $this->getPostTypeCapabilities(),
         ];
 
-        // Registering Custom Post Type
         register_post_type('open_govpub', $args);
     }
 
@@ -90,5 +75,14 @@ class PostType implements ServiceProviderInterface
             'show_admin_column' => true,
             'query_var'         => true
         ]);
+    }
+
+    protected function getPostTypeCapabilities(): array
+    {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
+            return [];
+        }
+
+        return ['create_posts' => 'do_not_allow'];
     }
 }

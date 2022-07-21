@@ -1,17 +1,11 @@
 <?php
 
-namespace SudwestFryslan\OpenGovernmentPublications;
+namespace SudwestFryslan\OpenGovernmentPublications\Providers;
 
 use WP_Query;
 
-class Settings implements ServiceProviderInterface
+class SettingsProvider extends ServiceProvider
 {
-    protected Container $container;
-
-    public function __construct(Container $container)
-    {
-        $this->container = $container;
-    }
     public function register()
     {
         add_action('admin_init', [$this, 'add_settings']);
@@ -21,18 +15,15 @@ class Settings implements ServiceProviderInterface
 
     public function add_settings()
     {
-        // Register the setting
         register_setting('open_govpub', 'open_govpub_settings');
 
-        // Add section
         add_settings_section(
             'open_govpub_settings_section',
             __('Algemeen', 'open-govpub'),
-            [$this, 'section_intro'],
+            fn() => '',
             'open_govpub'
         );
 
-        // creator field
         add_settings_field(
             'creator',
             __('Publicerende organisatie', 'open-govpub'),
@@ -40,10 +31,6 @@ class Settings implements ServiceProviderInterface
             'open_govpub',
             'open_govpub_settings_section'
         );
-    }
-
-    public function section_intro()
-    {
     }
 
     public function creator_field_render()

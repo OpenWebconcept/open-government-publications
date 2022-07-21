@@ -1,26 +1,16 @@
 <?php
 
-namespace SudwestFryslan\OpenGovernmentPublications;
+namespace SudwestFryslan\OpenGovernmentPublications\Providers;
 
 use WP_Query;
 use WP_REST_Request;
 use WP_REST_Response;
+use SudwestFryslan\OpenGovernmentPublications\SearchQueryBuilder;
 use SudwestFryslan\OpenGovernmentPublications\Entities\Publication;
 
-class RestRouteProvider implements ServiceProviderInterface
+class RestRouteProvider extends ServiceProvider
 {
-    protected Container $container;
-
-    /**
-     * The endpoint of the base API.
-     * @var string $namespace
-     */
-    private $namespace = 'owc/govpub/v1';
-
-    public function __construct(Container $container)
-    {
-        $this->container = $container;
-    }
+    protected string $namespace = 'owc/govpub/v1';
 
     public function register()
     {

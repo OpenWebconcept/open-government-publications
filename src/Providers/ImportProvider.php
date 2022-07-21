@@ -1,20 +1,15 @@
 <?php
 
-namespace SudwestFryslan\OpenGovernmentPublications;
+namespace SudwestFryslan\OpenGovernmentPublications\Providers;
 
 use WP_Query;
+use SudwestFryslan\OpenGovernmentPublications\Service;
 
-class Import implements ServiceProviderInterface
+class ImportProvider extends ServiceProvider
 {
-    protected Container $container;
     protected int $max_import = 50;
     protected int $transient_time = 10;
     protected int $limit_import = 3000;
-
-    public function __construct(Container $container)
-    {
-        $this->container = $container;
-    }
 
     public function register()
     {

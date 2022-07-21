@@ -2,15 +2,17 @@
 
 namespace SudwestFryslan\OpenGovernmentPublications;
 
-class Init implements ServiceProviderInterface
+use SudwestFryslan\OpenGovernmentPublications\Providers\ServiceProvider;
+
+class Init extends ServiceProvider
 {
-    protected Container $container;
     protected AssetLoader $loader;
 
     public function __construct(Container $container, AssetLoader $loader)
     {
-        $this->container = $container;
         $this->assetLoader = $loader;
+
+        parent::__construct($container);
     }
 
     public function register()

@@ -1,16 +1,9 @@
 <?php
 
-namespace SudwestFryslan\OpenGovernmentPublications;
+namespace SudwestFryslan\OpenGovernmentPublications\Providers;
 
-class AdminMenu implements ServiceProviderInterface
+class AdminMenuProvider extends ServiceProvider
 {
-    protected Container $container;
-
-    public function __construct(Container $container)
-    {
-        $this->container = $container;
-    }
-
     public function register(): void
     {
         add_action('admin_menu', [$this, 'addPages'], 10);

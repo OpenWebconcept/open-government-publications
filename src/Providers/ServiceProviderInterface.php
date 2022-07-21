@@ -1,6 +1,6 @@
 <?php
 
-namespace SudwestFryslan\OpenGovernmentPublications;
+namespace SudwestFryslan\OpenGovernmentPublications\Providers;
 
 interface ServiceProviderInterface
 {

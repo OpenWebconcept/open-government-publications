@@ -26,19 +26,25 @@ class Plugin
 
     public function boot()
     {
-        $this->container->get(RestRouteProvider::class)->register();
         $this->container->get(Init::class)->register();
-        $this->container->get(Import::class)->register();
-        $this->container->get(PostType::class)->register();
-        $this->container->get(Settings::class)->register();
-        $this->container->get(AdminMenu::class)->register();
-        $this->container->get(MetaBoxes::class)->register();
+
+        $this->registerServiceProviders();
 
         $this->loadTextDomain();
 
         register_activation_hook($this->container->get('plugin.file'), [$this, 'activation']);
 
         register_deactivation_hook($this->container->get('plugin.file'), [$this, 'deactivation']);
+    }
+
+    protected function registerServiceProviders()
+    {
+        $this->container->get(Providers\RestRouteProvider::class)->register();
+        $this->container->get(Providers\ImportProvider::class)->register();
+        $this->container->get(Providers\PostTypeProvider::class)->register();
+        $this->container->get(Providers\SettingsProvider::class)->register();
+        $this->container->get(Providers\AdminMenuProvider::class)->register();
+        $this->container->get(Providers\MetaboxProvider::class)->register();
     }
 
     protected function activation()
