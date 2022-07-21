@@ -66,7 +66,7 @@ class Settings implements ServiceProviderInterface
         );
 
         // Include the select input
-        include OPEN_GOVPUB_DIR . '/views/input/view-open-govpud-select.php';
+        require $this->container->get('plugin.path') . '/views/input/view-open-govpud-select.php';
     }
 
     public function add_reset_notice()

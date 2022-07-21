@@ -39,24 +39,21 @@ class Init implements ServiceProviderInterface
 
     public function enqueueScripts()
     {
-        // Enqueue admin plugin style
         wp_enqueue_style(
             'open_govpub',
             $this->assetLoader->getUrl('css/admin.css'),
             array(),
-            OPEN_GOVPUB_VERSION
+            $this->container->get('plugin.version')
         );
 
-        // Enqueue admin plugin script
         wp_enqueue_script(
             'open_govpub',
             $this->assetLoader->getUrl('js/admin.js'),
             array('jquery'),
-            OPEN_GOVPUB_VERSION,
+            $this->container->get('plugin.version'),
             true
         );
 
-        // Localize the script
         wp_localize_script('open_govpub', 'open_govpub', array(
             'ajaxurl' => admin_url('admin-ajax.php')
         ));

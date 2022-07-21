@@ -251,8 +251,9 @@ class Api implements ServiceProviderInterface
             // Sanitize the fields
             foreach ($parts as $field) {
                 // Check if field is allowed
-                if (in_array($field, $default))
+                if (in_array($field, $default)) {
                     $results[] = $field;
+                }
             }
 
             // Return the fields

@@ -9,7 +9,6 @@ namespace SudwestFryslan\OpenGovernmentPublications;
  */
 class Service
 {
-
     private $service;
     private $query               = array();
 
@@ -56,8 +55,9 @@ class Service
         $this->max_records = intval($max_records);
 
         // If limited offset isset re-run calculation
-        if ($this->has_limited_offset)
+        if ($this->has_limited_offset) {
             $this->set_limited_offset();
+        }
 
         return $this;
     }
@@ -78,8 +78,9 @@ class Service
     {
 
         // Check if field is key and not an array
-        if (!is_array($field))
+        if (!is_array($field)) {
             $field = array($field => $value);
+        }
 
         // Overwrite the query
         $this->query = $field;
@@ -162,8 +163,9 @@ class Service
         }
 
         // Check if parts need to be returned
-        if ($parts)
+        if ($parts) {
             $field = explode('/', $field);
+        }
 
         // Return the field
         return $field;
@@ -173,12 +175,14 @@ class Service
     {
 
         // If no items set, set the xml as items
-        if (!$items && $first_run)
+        if (!$items && $first_run) {
             $items = $this->xml;
+        }
 
         // If no fields left, return the items
-        if (empty($fields))
+        if (empty($fields)) {
             return ($string && $items ? $items->__toString() : $items);
+        }
 
         // Get first field
         $first_field = array_shift($fields);
@@ -202,8 +206,9 @@ class Service
             $this->total_found = $value;
 
             // If value is more then limit, return the limit
-            if ($value > $this->result_limit)
+            if ($value > $this->result_limit) {
                 return $this->result_limit;
+            }
         }
 
         // Return the value

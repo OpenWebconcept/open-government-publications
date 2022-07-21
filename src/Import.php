@@ -31,8 +31,9 @@ class Import implements ServiceProviderInterface
     public function get_service_last_date($src_id, $last_dates = false, $default = '1990-01-01')
     {
         // Check if last dates is passed
-        if (!$last_dates)
+        if (!$last_dates) {
             $last_dates = get_open_govpub_option('last_import_dates');
+        }
 
         // If last dates is an array and it is not empty
         if (is_array($last_dates) && !empty($last_dates)) {
@@ -343,12 +344,14 @@ class Import implements ServiceProviderInterface
         $search_meta = array();
 
         // If post title available, add it
-        if (isset($post_data['post_title']))
+        if (isset($post_data['post_title'])) {
             $search_meta[] = $post_data['post_title'];
+        }
 
         // If meta available, add it
-        if (isset($result['meta']) && is_array($result['meta']))
+        if (isset($result['meta']) && is_array($result['meta'])) {
             $search_meta = array_merge($search_meta, $result['meta']);
+        }
 
         // Create a search string
         $search_string = implode(' ', $search_meta);

@@ -50,7 +50,7 @@ class MetaBoxes implements ServiceProviderInterface
         $meta       = get_post_meta($post->ID, 'open_govpub_meta', true);
 
         // Include the view
-        require $this->container->get('OPEN_GOVPUB_DIR') . '/views/admin/view-open-govpub-meta-box.php';
+        require $this->container->get('plugin.path') . '/views/admin/view-open-govpub-meta-box.php';
     }
 
     public function render_search_meta_box($post)
@@ -60,6 +60,6 @@ class MetaBoxes implements ServiceProviderInterface
         $search_meta = get_post_meta($post->ID, 'search_meta', true);
 
         // Include the view
-        require $this->container->get('OPEN_GOVPUB_DIR') . '/views/admin/view-open-govpub-meta-box-search.php';
+        require $this->container->get('plugin.path') . '/views/admin/view-open-govpub-meta-box-search.php';
     }
 }

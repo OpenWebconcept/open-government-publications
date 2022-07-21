@@ -25,7 +25,7 @@ class AdminMenu implements ServiceProviderInterface
             __('Import options', 'open-govpub'),
             'manage_options',
             'open-govpub',
-            fn() => require $this->container->get('OPEN_GOVPUB_DIR') . '/views/admin/view-open-govpub-import.php'
+            fn() => require $this->container->get('plugin.path') . '/views/admin/view-open-govpub-import.php'
         );
 
         // Add the settings page to the menu
@@ -50,17 +50,17 @@ class AdminMenu implements ServiceProviderInterface
             $c_reset = (isset($_GET['reset']) ? sanitize_text_field($_GET['reset']) : '');
 
             // Include the reset view
-            require $this->container->get('OPEN_GOVPUB_DIR') . '/views/admin/view-open-govpub-reset.php';
-        } else if ($c_tab == 'endpoints') {
+            require $this->container->get('plugin.path') . '/views/admin/view-open-govpub-reset.php';
+        } elseif ($c_tab == 'endpoints') {
             // Get the api args
             $search_args    = get_open_govpub_search_api_args();
             $types_args     = get_open_govpub_types_api_args();
 
             // require the endpoints view
-            require $this->container->get('OPEN_GOVPUB_DIR') . '/views/admin/view-open-govpub-endpoints.php';
+            require $this->container->get('plugin.path') . '/views/admin/view-open-govpub-endpoints.php';
         } else {
             // require the settings view
-            require $this->container->get('OPEN_GOVPUB_DIR') . '/views/admin/view-open-govpub-settings.php';
+            require $this->container->get('plugin.path') . '/views/admin/view-open-govpub-settings.php';
         }
     }
 }

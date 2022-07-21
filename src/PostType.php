@@ -20,7 +20,7 @@ class PostType implements ServiceProviderInterface
     public function registerPostType()
     {
         $capabilities = ['create_posts' => 'do_not_allow'];
-        if (WP_DEBUG === true || OPEN_GOVPUB_DEBUG === true) {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
             $capabilities = [];
         }
 

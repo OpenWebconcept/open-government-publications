@@ -36,9 +36,9 @@ class Plugin
 
         $this->loadTextDomain();
 
-        register_activation_hook($this->container->get('OPEN_GOVPUB_FILE'), [$this, 'activation']);
+        register_activation_hook($this->container->get('plugin.file'), [$this, 'activation']);
 
-        register_deactivation_hook($this->container->get('OPEN_GOVPUB_FILE'), [$this, 'deactivation']);
+        register_deactivation_hook($this->container->get('plugin.file'), [$this, 'deactivation']);
     }
 
     protected function activation()
@@ -57,7 +57,7 @@ class Plugin
         load_plugin_textdomain(
             'open-govpub',
             false,
-            $this->container->get('OPEN_GOVPUB_BASENAME') . '/languages'
+            basename($this->container->get('plugin.path')) . '/languages'
         );
     }
 }
