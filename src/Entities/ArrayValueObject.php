@@ -25,6 +25,9 @@ class ArrayValueObject implements ArrayAccess, Iterator
         return $this->getValue($name);
     }
 
+    /**
+     * @param mixed $default
+     */
     public function getValue(string $name, $default = null)
     {
         if ($this->hasMutator($name)) {
@@ -54,7 +57,10 @@ class ArrayValueObject implements ArrayAccess, Iterator
         return $this->{$name}($value);
     }
 
-    protected function hydrate($data)
+    /**
+     * @param  array|object $data
+     */
+    protected function hydrate($data): void
     {
         if (is_object($data)) {
             $data = get_object_vars($data);
@@ -62,7 +68,7 @@ class ArrayValueObject implements ArrayAccess, Iterator
 
         if (! is_array($data)) {
             throw new InvalidArgumentException(
-                sprintf("Unable to hydrate %s: invalid data type", __CLASS__)
+                sprintf("Unable to hydrate %s: invalid data type", get_called_class())
             );
         }
 

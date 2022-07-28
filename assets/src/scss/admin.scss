@@ -1,26 +1,37 @@
 // Import variables
 @import "variables";
 
-.open_govpub--import-bar {
-	display: none;
-	width:100%;
-	border:1px solid #bbbbbb;
-	border-radius:5px;
-	overflow:hidden;
-}
-.open_govpub--import-progress {
-	background-color:#0073aa;
-	padding:5px 0;
-	text-align:center;
-	border-radius:inherit;
-	-webkit-transition: width 0.5s;
-  	transition: width 0.5s;
-	span {
-		font-size:14px;
-		color:#FFFFFF;
+.open_govpub {
+	&--import-bar {
+		display: none;
+		width:100%;
+		border:1px solid #bbbbbb;
+		border-radius:5px;
+		overflow:hidden;
 	}
-}
 
-#open_govpub--halt-import {
-	display:none;
+	&--import-progress {
+		background-color:#0073aa;
+		padding:5px 0;
+		text-align:center;
+		border-radius:inherit;
+		-webkit-transition: width 0.5s;
+	  	transition: width 0.5s;
+		span {
+			font-size:14px;
+			color:#FFFFFF;
+		}
+	}
+
+	&--halt-import, &--progress {
+		display: none;
+	}
+
+	&--progress-output {
+		height: 250px;
+		overflow-y: scroll;
+		max-width: 500px;
+		background: white;
+		padding: 0.5em;
+	}
 }

@@ -1,9 +1,8 @@
 <?php
 
-namespace SudwestFryslan\Theme\Tests\Unit;
+namespace SudwestFryslan\OpenGovernmentPublications\Tests\Unit;
 
 use Mockery as m;
-use SudwestFryslan\GravityForms\Crypt;
 
 class ExampleTest extends TestCase
 {

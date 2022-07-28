@@ -12,23 +12,23 @@ class RestRouteProvider extends ServiceProvider
 {
     protected string $namespace = 'owc/govpub/v1';
 
-    public function register()
+    public function register(): void
     {
         add_action('rest_api_init', [$this, 'registerRestRoutes'], 10);
     }
 
-    public function registerRestRoutes()
+    public function registerRestRoutes(): void
     {
         register_rest_route($this->namespace, '/types', [
             'methods'   => 'GET',
             'callback'  => [$this, 'getTypes'],
-            'args'      => get_open_govpub_types_api_args()
+            'args'      => $this->container->get('types.api.args')
         ]);
 
         register_rest_route($this->namespace, '/search', [
             'methods'   => 'GET',
             'callback'  => [$this, 'search'],
-            'args'      => get_open_govpub_search_api_args()
+            'args'      => $this->container->get('search.api.args')
         ]);
     }
 
@@ -39,7 +39,7 @@ class RestRouteProvider extends ServiceProvider
             'hide_empty'    => (bool) $request->get_param('hide_empty')
         ]);
 
-        if (! $types || empty($types)) {
+        if (is_wp_error($types) || empty($types)) {
             return new WP_REST_Response([], 200);
         }
 

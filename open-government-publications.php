@@ -2,12 +2,13 @@
 
 /**
  * Plugin Name: Open Government Publications
- * Description: With this plugin you can make Government Publications available trought a REST API
- * Version: 1.0.0
+ * Description: Import and publish Government Publications through the REST API.
+ * Version: 2.0.0
  * Author: Súdwest-Fryslân
  * Author URI: https://sudwestfryslan.nl/
  * Requires at least: 5.1
  * Tested up to: 6.1
+ * Requires PHP: 7.4
  */
 
 if (! defined('ABSPATH')) {

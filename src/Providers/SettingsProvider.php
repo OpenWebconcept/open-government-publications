@@ -1,19 +1,35 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SudwestFryslan\OpenGovernmentPublications\Providers;
 
 use WP_Query;
+use SudwestFryslan\OpenGovernmentPublications\Container;
+use SudwestFryslan\OpenGovernmentPublications\Entities\ImportOptions;
+use SudwestFryslan\OpenGovernmentPublications\Entities\Settings;
 
 class SettingsProvider extends ServiceProvider
 {
-    public function register()
+    protected Settings $settings;
+    protected ImportOptions $options;
+
+    public function __construct(Container $container, Settings $settings, ImportOptions $options)
+    {
+        $this->settings = $settings;
+        $this->options = $options;
+
+        parent::__construct($container);
+    }
+
+    public function register(): void
     {
         add_action('admin_init', [$this, 'add_settings']);
         add_action('admin_notices', [$this, 'add_reset_notice']);
         add_action('wp_ajax_reset_open_govpub', [$this, 'reset_open_govpub_data']);
     }
 
-    public function add_settings()
+    public function add_settings(): void
     {
         register_setting('open_govpub', 'open_govpub_settings');
 
@@ -33,169 +49,107 @@ class SettingsProvider extends ServiceProvider
         );
     }
 
-    public function creator_field_render()
+    public function creator_field_render(): void
     {
-        // Get available creators
         $organizations = get_option('open_govpub_organization');
-        $options = (is_array($organizations) ? $organizations : []);
+        $currentCreator = $this->settings->get('creator', '');
 
-        // Set the values as keys
-        $options = array_combine($options, $options);
+        require $this->container->get('plugin.path') . '/views/input/creator-select.php';
+    }
 
-        // Set the name and value
-        $name = 'open_govpub_settings[creator]';
-        $value = get_open_govpub_setting('creator');
+    public function add_reset_notice(): bool
+    {
+        /**
+         * @todo add nonce validation
+         */
+        if (! isset($_GET['page']) || ! isset($_GET['tab']) || ! isset($_GET['deleted_i'])) {
+            return false;
+        }
 
-        // Set a description
-        $desc = __(
-            'Warning: please reset all publications after changing this field if a import has taken place',
-            'open-govpub'
+        $deleted  = (int) ($_GET['deleted_i'] ?? 0);
+        $maxItems  = (int) ($_GET['max_items'] ?? 0);
+
+        if ($deleted >= $maxItems) {
+            return (bool) printf(
+                '<div class="notice notice-success"><p>%s</p></div>',
+                __('All posts deleted', 'open-govpub')
+            );
+        }
+
+        $message = sprintf(
+            __('Too many posts found, %1$s of %2$s posts deleted. Please re-run the reset to delete the next %1$s posts', 'open-govpub'),
+            $deleted,
+            $maxItems
         );
 
-        // Include the select input
-        require $this->container->get('plugin.path') . '/views/input/view-open-govpud-select.php';
+        return (bool) printf('<div class="notice notice-warning"><p>%s</p></div>', $message);
     }
 
-    public function add_reset_notice()
-    {
-
-        // Set notice to false
-        $notice = false;
-        $type   = 'success';
-
-        // Check if reset notice needs to be shown
-        if (isset($_GET['page']) && isset($_GET['tab']) && isset($_GET['deleted_i'])) {
-            // Set variable
-            $deleted_i  = intval($_GET['deleted_i']);
-            $max_items  = intval($_GET['max_items']);
-
-            // Check if all items are deleted
-            if ($deleted_i >= $max_items) {
-                // Set notice
-                $notice = __('All posts deleted', 'open-govpub');
-            } else {
-                // Set notice
-                $type   = 'warning';
-                $notice = sprintf(
-                    __('To many posts found, %s of %s posts deleted. Please re-run the reset to delete the next %s posts', 'open-govpub'),
-                    $deleted_i,
-                    $max_items,
-                    $deleted_i
-                );
-            }
-        }
-
-        // If notice then show
-        if ($notice) {
-            echo '<div class="notice notice-' . $type . '">';
-            echo '<p>' . $notice . '</p>';
-            echo '</div>';
-        }
-    }
-
+    /**
+     * @return never
+     */
     public function reset_open_govpub_data()
     {
-
-        if (isset($_POST['referer'])) {
-            $referer = sanitize_text_field($_POST['referer']);
+        if (! isset($_POST['reset']) || empty($_POST['reset'])) {
+            wp_die("Invalid action.");
         }
 
-        // Check if reset action isset
-        if (isset($_POST['reset']) && !empty($_POST['reset'])) {
-            // Set default deleted posts as false
-            $deleted = false;
+        $deleted = false;
+        $reset = sanitize_text_field($_POST['reset']);
 
-            // Get reset action
-            $reset = sanitize_text_field($_POST['reset']);
-
-            // Switch actions
-            switch ($reset) {
-                case 'statistics':
-                    $this->reset_statistics();
-                    break;
-                case 'posts':
-                    $this->reset_statistics();
-                    $deleted = $this->reset_posts();
-                    break;
-                case 'all':
-                    $this->reset_statistics();
-                    $this->reset_settings();
-                    $deleted = $this->reset_posts();
-                    break;
-                default:
-                    break;
-            }
-
-        // Add the action to the referer
-            $referer = add_query_arg('reset', $reset, $referer);
-
-            // Check if deleted isset
-            if ($deleted) {
-                // Add deleted as query arg
-                $referer = add_query_arg($deleted, $referer);
-            }
-
-            // Redirect to referer
-            wp_redirect($referer);
+        switch ($reset) {
+            case 'statistics':
+                $this->options->reset();
+                break;
+            case 'posts':
+                $this->options->reset();
+                $deleted = $this->deletePublications();
+                break;
+            case 'all':
+                $this->options->reset();
+                $this->settings->reset();
+                $deleted = $this->deletePublications();
+                break;
+            default:
+                break;
         }
 
-        exit;
+        $referer = sanitize_text_field(($_POST['referer'] ?? ''));
+        $referer = add_query_arg('reset', $reset, $referer);
+
+        if ($deleted) {
+            $referer = add_query_arg($deleted, $referer);
+        }
+
+        wp_redirect($referer);
+        exit();
     }
 
-    public function reset_statistics()
+    /**
+     * @psalm-return array{deleted_i: int, max_items: int}
+     */
+    protected function deletePublications(): array
     {
-
-        // Delete the option
-        delete_option('open_govpub_options');
-    }
-
-    public function reset_settings()
-    {
-
-        // Delete the setting
-        delete_option('open_govpub_settings');
-    }
-
-    public function reset_posts()
-    {
-
-        // Set args
-        $args = [
+        /**
+         * @todo move to separate repository
+         */
+        $publications = new WP_Query([
             'post_type'         => 'open_govpub',
-            'posts_per_page'    => 100
-        ];
+            'posts_per_page'    => 250
+        ]);
 
-        // Set delete iteration
-        $deleted_i = 0;
+        $foundItems = $publications->found_posts;
+        $deleted = 0;
 
-        // Get posts
-        $the_query = new WP_Query($args);
-
-        // Check if post found and set that post id
-        if ($the_query->have_posts()) {
-            while ($the_query->have_posts()) {
-                $the_query->the_post();
-
-                // Set the post id
-                $post_id = get_the_ID();
-
-                // Force delete the post
-                wp_delete_post($post_id, true);
-
-                // Add 1 to delete iteration
-                $deleted_i++;
+        if ($publications->have_posts()) {
+            while ($publications->have_posts()) {
+                $publications->the_post();
+                $deleted += (bool) wp_delete_post(get_the_ID(), true);
             }
         }
 
-        // Set max items
-        $max_items = $the_query->found_posts;
-
-        // Reset the postdata
         wp_reset_postdata();
 
-        return [
-            'deleted_i' => $deleted_i,
-            'max_items' => $max_items
-        ];
+        return ['deleted_i' => $deleted, 'max_items' => $foundItems];
     }
 }

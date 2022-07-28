@@ -1,10 +1,7 @@
 <div class="wrap">
     <h1><?php _e('API Endpoints', 'open-govpub'); ?></h1>
     <hr class="wp-header-end">
-    <?php
-        // require the navigation tabs
-        require $this->container->get('plugin.path') . '/views/admin/view-open-govpub-tabs.php';
-    ?>
+    <?php echo $this->snippet('tabs.php'); ?>
     
     <h2><?php _e('Types endpoint', 'open-govpub'); ?></h2>
     <code><?php echo site_url('/wp-json/owc/govpub/v1/types'); ?></code>
@@ -19,11 +16,11 @@
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($types_args as $param => $info) { ?>
+            <?php foreach ($typesArguments as $param => $info) { ?>
                 <tr>
                     <th><strong><?php echo $param; ?></strong></th>
-                    <td><?php echo $info['description']; ?></td>
-                    <td><?php echo $info['type']; ?></td>
+                    <td><?php echo $info['description'] ?? ''; ?></td>
+                    <td><?php echo $info['type'] ?? ''; ?></td>
                 </tr>
             <?php } ?>
         </tbody>
@@ -44,11 +41,11 @@
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($search_args as $param => $info) { ?>
+            <?php foreach ($searchArguments as $param => $info) { ?>
                 <tr>
                     <th><strong><?php echo $param; ?></strong></th>
-                    <td><?php echo $info['description']; ?></td>
-                    <td><?php echo $info['type']; ?></td>
+                    <td><?php echo $info['description'] ?? ''; ?></td>
+                    <td><?php echo $info['type'] ?? ''; ?></td>
                 </tr>
             <?php } ?>
         </tbody>

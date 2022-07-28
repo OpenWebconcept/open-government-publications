@@ -2,21 +2,24 @@
 
 namespace SudwestFryslan\OpenGovernmentPublications\Providers;
 
+use WP_Post;
 use SudwestFryslan\OpenGovernmentPublications\Entities\Publication;
+use SudwestFryslan\OpenGovernmentPublications\Views\MetaBox as MetaBoxView;
+use SudwestFryslan\OpenGovernmentPublications\Views\MetaBoxSearch as MetaBoxSearchView;
 
 class MetaboxProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         add_action('add_meta_boxes', [$this, 'register_meta_boxes']);
     }
 
-    public function register_meta_boxes()
+    public function register_meta_boxes(): void
     {
         add_meta_box(
             'opengovpub-meta-box',
             __('Metadata'),
-            [$this, 'render_meta_box'],
+            [$this, 'renderMetaBox'],
             'open_govpub',
             'normal',
             'default'
@@ -25,24 +28,24 @@ class MetaboxProvider extends ServiceProvider
         add_meta_box(
             'opengovpub-search-meta-box',
             __('Search string'),
-            [$this, 'render_search_meta_box'],
+            [$this, 'renderSearchMetaBox'],
             'open_govpub',
             'normal',
             'default'
         );
     }
 
-    public function render_meta_box($post)
+    public function renderMetaBox(WP_Post $post)
     {
         $publication = new Publication($post);
 
-        require $this->container->get('plugin.path') . '/views/admin/view-open-govpub-meta-box.php';
+        return $this->container->get(MetaBoxView::class)->output(compact('publication'));
     }
 
-    public function render_search_meta_box($post)
+    public function renderSearchMetaBox(WP_Post $post)
     {
-        $search_meta = get_post_meta($post->ID, 'search_meta', true);
+        $meta = get_post_meta($post->ID, 'search_meta', true);
 
-        require $this->container->get('plugin.path') . '/views/admin/view-open-govpub-meta-box-search.php';
+        return $this->container->get(MetaBoxSearchView::class)->output(compact('meta'));
     }
 }

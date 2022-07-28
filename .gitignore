@@ -1,3 +1,9 @@
-/node_modules
+.vscode
+*.code-workspace
+.phplint-cache
+.phpunit.result.cache
+/dist
 /vendor
+/releases
 /assets/dist
+/node_modules

@@ -4,13 +4,13 @@ namespace SudwestFryslan\OpenGovernmentPublications\Providers;
 
 class PostTypeProvider extends ServiceProvider
 {
-    public function register()
+    public function register(): void
     {
         add_action('init', [$this, 'registerPostType'], 10);
         add_action('init', [$this, 'registerTaxonomy'], 10);
     }
 
-    public function registerPostType()
+    public function registerPostType(): void
     {
         $labels = [
             'name'                => __('Open Government Publications', 'open-govpub'),
@@ -52,7 +52,7 @@ class PostTypeProvider extends ServiceProvider
         register_post_type('open_govpub', $args);
     }
 
-    public function registerTaxonomy()
+    public function registerTaxonomy(): void
     {
         $labels = [
             'name'              => __('Type', 'open-govpub'),

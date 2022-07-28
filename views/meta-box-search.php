@@ -1,0 +1,1 @@
+<textarea class="widefat" rows="10" readonly="readonly"><?php echo $meta; ?></textarea>

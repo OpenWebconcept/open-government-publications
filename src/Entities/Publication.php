@@ -6,6 +6,19 @@ namespace SudwestFryslan\OpenGovernmentPublications\Entities;
 
 class Publication extends ArrayValueObject
 {
+    public function linkToService(Service $service): bool
+    {
+        $term = $service->getTerm();
+
+        if ($term) {
+            $ttIds = wp_set_object_terms($this->ID, $term->term_id, 'open_govpub_type');
+
+            return ! is_wp_error($ttIds);
+        }
+
+        return false;
+    }
+
     public function identifier(): string
     {
         return (string) get_post_meta($this->ID, 'open_govpub_identifier', true);

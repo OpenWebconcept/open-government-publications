@@ -1,10 +1,9 @@
 <div class="wrap">
     <h1><?php _e('Reset Open Government Publications', 'open-govpub'); ?></h1>
     <hr class="wp-header-end">
-    <?php
-        // require the navigation tabs
-        require $this->container->get('plugin.path') . '/views/admin/view-open-govpub-tabs.php';
-    ?>
+    
+    <?php echo $this->snippet('tabs.php'); ?>
+
     <form method="post" action="<?php echo admin_url('admin-ajax.php'); ?>">
         <table class="form-table">
             <tbody>

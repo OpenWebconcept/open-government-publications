@@ -1,10 +1,13 @@
 <?php
 
-namespace SudwestFryslan\OpenGovernmentPublications;
+namespace SudwestFryslan\OpenGovernmentPublications\Services;
 
-class Cronjobs
+use Throwable;
+use DateTime;
+
+class EventService
 {
-    public function schedule()
+    public function schedule(): void
     {
         // Add the import organization schedule
         if (! wp_next_scheduled('open_govpub_import_organization')) {
@@ -20,5 +23,21 @@ class Cronjobs
         if (! wp_next_scheduled('open_govpub_task_import_publications')) {
             wp_schedule_event(time(), 'hourly', 'open_govpub_task_import_publications');
         }
+    }
+
+    public function getSchedule(string $eventName): ?DateTime
+    {
+        try {
+            $datetime = DateTime::createFromFormat('U', wp_next_scheduled($eventName));
+
+            return $datetime ?: null;
+        } catch (Throwable $e) {
+            return null;
+        }
+    }
+
+    public function getFormattedSchedule(string $eventName, string $format): string
+    {
+        return wp_date($format, wp_next_scheduled($eventName));
     }
 }

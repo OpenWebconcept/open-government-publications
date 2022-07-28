@@ -1,1 +1,0 @@
-<textarea class="widefat" rows="10" readonly="readonly"><?php echo $search_meta; ?></textarea>

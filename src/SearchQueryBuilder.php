@@ -82,6 +82,10 @@ class SearchQueryBuilder
         return $this->setArgument('tax_query', $query);
     }
 
+    /**
+     * @param string $argument
+     * @param mixed $value
+     */
     public function setArgument(string $argument, $value): self
     {
         $this->query[$argument] = $value;

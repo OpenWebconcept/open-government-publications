@@ -4,5 +4,5 @@ namespace SudwestFryslan\OpenGovernmentPublications\Providers;
 
 interface ServiceProviderInterface
 {
-    public function register();
+    public function register(): void;
 }

@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SudwestFryslan\OpenGovernmentPublications;
 
 use SudwestFryslan\OpenGovernmentPublications\Providers\ServiceProvider;
 
 class Init extends ServiceProvider
 {
-    protected AssetLoader $loader;
+    protected AssetLoader $assetLoader;
 
     public function __construct(Container $container, AssetLoader $loader)
     {
@@ -15,31 +17,28 @@ class Init extends ServiceProvider
         parent::__construct($container);
     }
 
-    public function register()
+    public function register(): void
     {
         // Import organizations on activation and daily by cronjob
         add_action('open_govpub_import_organization', [$this, 'importOrganizations']);
-
-        // Enqueue admin styles and scripts
         add_action('admin_enqueue_scripts', [$this, 'enqueueScripts']);
     }
 
-    public function importOrganizations()
+    /**
+     * @return true
+     */
+    public function importOrganizations(): bool
     {
+        $list = $this->getOrganisationsList();
 
-        // Get the organizations from source
-        $list = get_open_govpub_source_organizations();
-
-        // Check if list is not empty
-        if (!empty($list)) {
-            // Save the list
+        if (! empty($list)) {
             update_option('open_govpub_organization', $list);
         }
 
         return true;
     }
 
-    public function enqueueScripts()
+    public function enqueueScripts(): void
     {
         wp_enqueue_style(
             'open_govpub',
@@ -59,5 +58,25 @@ class Init extends ServiceProvider
         wp_localize_script('open_govpub', 'open_govpub', [
             'ajaxurl' => admin_url('admin-ajax.php')
         ]);
+    }
+
+    /**
+     * @todo move to separate class
+     * @return array
+     */
+    protected function getOrganisationsList(): array
+    {
+        $source_url = 'https://standaarden.overheid.nl/owms/terms/Overheidsorganisatie.xml';
+        $result = [];
+
+        $xml = simplexml_load_file($source_url);
+
+        if (isset($xml->value) && ! empty($xml->value)) {
+            foreach ($xml->value as $value) {
+                $result[] = $value->prefLabel->__toString();
+            }
+        }
+
+        return $result;
     }
 }

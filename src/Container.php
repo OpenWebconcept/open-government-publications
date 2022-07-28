@@ -10,7 +10,7 @@ use RuntimeException;
 
 class Container
 {
-    /** @var array<int, callable> */
+    /** @var array<int|string, callable> */
     protected array $bindings = [];
 
     /**
@@ -97,7 +97,7 @@ class Container
             return $type->getName();
         }
 
-        if ($type instanceof \ReflectionUnionType) {
+        if (class_exists('ReflectionUnionType') && $type instanceof \ReflectionUnionType) {
             $types = $type->getTypes();
 
             return $this->getReflectionTypeName(reset($types));

@@ -1,6 +1,6 @@
 <?php
 
-namespace SudwestFryslan\Theme\Tests\Unit;
+namespace SudwestFryslan\OpenGovernmentPublications\Tests\Unit;
 
 use WP_Mock;
 use WP_Mock\Tools\TestCase as BaseTestCase;

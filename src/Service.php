@@ -2,57 +2,46 @@
 
 namespace SudwestFryslan\OpenGovernmentPublications;
 
-/**
- * openGovpub Initial setup
- *
- * @since   1.0.0
- */
+use DateTime;
+use Exception;
+use SimpleXMLElement;
+use SudwestFryslan\OpenGovernmentPublications\Entities\Service as ServiceEntity;
+use SudwestFryslan\OpenGovernmentPublications\Entities\ServiceRecord;
+
 class Service
 {
-    private $service;
-    private $query               = [];
+    protected ServiceEntity $service;
+    protected array $query = [];
 
-    private $offset              = 1;
-    private $max_records         = 10;
+    protected int $offset = 1;
+    protected int $max_records = 10;
 
-    private $result_limit        = 3000;
-    private $total_found         = 0;
+    protected int $result_limit = 3000;
+    protected int $total_found = 0;
 
-    private $sort_by             = false;
-    private $sort_order          = 'ascending';
+    protected $sort_by = false;
+    protected $sort_order = 'ascending';
 
-    private $has_limited_offset  = false;
+    protected $has_limited_offset  = false;
 
-    private $xml;
-    private $last_record;
+    protected $xml;
+    protected $last_record;
 
-    /**
-     * openGovpubService Constructor.
-     */
-    public function __construct($service)
+    public function __construct(ServiceEntity $service)
     {
-
-        // Set the service
         $this->service = $service;
-
-        // Return object
-        return $this;
     }
 
-    public function set_offset($offset)
+    public function set_offset(int $offset): self
     {
-
-        // Set the offset
-        $this->offset = intval($offset) + 1;
+        $this->offset = $offset + 1;
 
         return $this;
     }
 
-    public function set_max_records($max_records)
+    public function set_max_records(int $max_records): self
     {
-
-        // Set the max_records
-        $this->max_records = intval($max_records);
+        $this->max_records = $max_records;
 
         // If limited offset isset re-run calculation
         if ($this->has_limited_offset) {
@@ -62,120 +51,152 @@ class Service
         return $this;
     }
 
-    public function set_limited_offset()
+    public function set_limited_offset(): self
     {
-
-        // Set limited offset to true
         $this->has_limited_offset = true;
-
-        // Set the offset
         $this->offset = ($this->result_limit - $this->max_records) + 1;
 
         return $this;
     }
 
-    public function set_query($field, $value = false)
+    public function set_query(array $query): self
     {
+        $this->query = $query;
 
-        // Check if field is key and not an array
-        if (!is_array($field)) {
-            $field = [$field => $value];
-        }
-
-        // Overwrite the query
-        $this->query = $field;
-
-        // Set default sort
         $this->set_default_sort();
 
         return $this;
     }
 
-    public function get_last_fieldname($name, $split = true, $s_char = ':')
+    public function set_default_sort(): self
     {
-
-        // Get field parts
-        $parts = $this->get_field($name, true);
-
-        // Get last part of the path
-        $last_part = end($parts);
-
-        // Check if name needs to be split
-        if ($split) {
-            $last_parts = explode($s_char, $last_part);
-
-            return end($last_parts);
-        }
-
-        return $last_part;
-    }
-
-    public function set_default_sort()
-    {
-
-        // Set the sorting
-        $this->sort_by = $this->get_last_fieldname('created_at');
+        $this->sort_by = $this->getLastFieldname('created_at');
 
         return $this;
     }
 
-    public function get_base_url()
+    /**
+     * @return (ServiceRecord[]|mixed)[]
+     *
+     * @psalm-return array{data: list<ServiceRecord>, pagination: mixed}
+     */
+    public function get_mapped_results(): array
     {
+        $url = $this->getRequestUrl();
+        $this->xml = $this->doRequest($url);
 
-        // Get the base url
-        $base_url = $this->service['url'];
+        $records = $this->get_mapping_item('records');
 
-        // Check if the default attributes exists
-        if (isset($this->service['default_attr'])) {
-            // Set the attributes
-            $attributes = $this->service['default_attr'];
+        $results = ['data' => [], 'pagination' => $this->get_pagination_data()];
 
-            // Add the attributes to the url
-            $base_url   = add_query_arg($attributes, $base_url);
+        if (empty($records)) {
+            return $results;
         }
 
-        // Return the base url
-        return $base_url;
+        foreach ($records as $record) {
+            $this->last_record = $this->getMappedRecord($record);
+
+            // Add the mapped record as data record
+            $results['data'][] = $this->last_record;
+        }
+
+        return $results;
     }
 
-    public function is_field_array($fieldname)
+    public function get_last_record()
     {
-
-        // Check if field exists in mapping
-        if (isset($this->service['mapping'][$fieldname])) {
-            // Return if field is array
-            return is_array($this->service['mapping'][$fieldname]);
-        }
-
-        return false;
+        return $this->last_record;
     }
 
-    public function get_field($fieldname, $parts = false)
+    public function get_pagination_data(): array
     {
+        // $records    = $this->get_mapping_item('records');
 
-        // Set default
-        $field = $fieldname;
+        return [
+            'max_num_records'   => $this->get_mapping_item('numberOfRecords', false, true),
+            'total_found'       => $this->total_found,
+            'first_item'        => $this->offset,
+            // 'last_item'         => (count($records) - 1) + $this->offset
+        ];
+    }
 
-        // Check if field exists in mapping
-        if (isset($this->service['mapping'][$fieldname])) {
-            // Set the field
-            $field = $this->service['mapping'][$fieldname];
+    protected function getMappedRecord(SimpleXMLElement $record): ServiceRecord
+    {
+        $created_at = $this->get_mapping_item('created_at', $record, true);
+        $updated_at = $this->get_mapping_item('updated_at', $record, true);
+
+        return new ServiceRecord([
+            'identifier'    => $this->get_mapping_item('identifier', $record, true),
+            'title'         => $this->get_mapping_item('title', $record, true),
+            'permalink'     => $this->get_mapping_item('permalink', $record, true),
+            'meta'          => $this->get_mapping_item('meta', $record, true),
+            'created'       => new DateTime($created_at),
+            'updated'       => new DateTime($updated_at),
+        ]);
+    }
+
+    /**
+     * @param SimpleXMLElement|false $items
+     */
+    protected function get_mapping_item(string $fieldname, $items = false, bool $string = false, $first_run = true)
+    {
+        if (! $this->isFieldArray($fieldname)) {
+            $fields = $this->getField($fieldname, true);
+            $value = $this->get_recursive_item($fields, $items, $string, $first_run);
+
+            return $this->filter_maping_item($fieldname, $value);
         }
 
-        // Check if parts need to be returned
-        if ($parts) {
+        $results = [];
+        $parentFields = $this->getField($fieldname, false);
+
+        foreach ($parentFields as $fieldKey => $mapString) {
+            $fieldParts = explode('/', $mapString);
+
+            $results[$fieldKey] = $this->get_recursive_item(
+                $fieldParts,
+                $items,
+                $string,
+                $first_run
+            );
+        }
+
+        return $results;
+    }
+
+    /**
+     * @param  string       $fieldname
+     * @param  bool $inParts
+     * @return string|array
+     */
+    protected function getField(string $fieldname, bool $inParts = false)
+    {
+        $field = $this->service->getMappingOf($fieldname, $fieldname);
+
+        if ($inParts) {
             $field = explode('/', $field);
         }
 
-        // Return the field
         return $field;
     }
 
-    public function get_recursive_item($fields, $items = false, $string = false, $first_run = true)
+    public function getLastFieldname($name, $split = true, $splitCharacter = ':')
     {
+        $parts = $this->getField($name, true);
+        $lastPart = end($parts);
 
-        // If no items set, set the xml as items
-        if (!$items && $first_run) {
+        if ($split) {
+            $lastParts = explode($splitCharacter, $lastPart);
+
+            return end($lastParts);
+        }
+
+        return $lastPart;
+    }
+
+    protected function get_recursive_item(array $fields, $items = false, $string = false, bool $first_run = true)
+    {
+        if (! $items && $first_run) {
             $items = $this->xml;
         }
 
@@ -188,7 +209,8 @@ class Service
         $first_field = array_shift($fields);
 
         // Strip everything before :
-        $first_field = end(explode(':', $first_field));
+        $first_field = explode(':', $first_field);
+        $first_field = end($first_field);
 
         // Get item by first field name
         $items = $items->{$first_field};
@@ -197,9 +219,15 @@ class Service
         return $this->get_recursive_item($fields, $items, $string, false);
     }
 
-    public function filter_maping_item($fieldname, $value)
+    protected function isFieldArray($fieldname): bool
     {
+        $mapping = $this->service->getMappingOf($fieldname);
 
+        return is_array($mapping);
+    }
+
+    protected function filter_maping_item(string $fieldname, $value)
+    {
         // If it is the max number of records item
         if ($fieldname == 'numberOfRecords') {
             // Set total records variable
@@ -211,81 +239,60 @@ class Service
             }
         }
 
-        // Return the value
         return $value;
     }
 
-    public function get_mapping_item($fieldname, $items = false, $string = false, $first_run = true)
+    /**
+     * @todo move to separate URL builder
+     * @return string
+     */
+    protected function getRequestUrl(): string
     {
+        $requestUrl = add_query_arg([
+            $this->getField('startRecord')     => $this->offset,
+            $this->getField('maximumRecords')  => $this->max_records,
+            $this->getField('query')           => urlencode($this->getQueryUrlParameter()),
+        ], $this->service->getUrl());
 
-        // Check if field is array
-        if ($this->is_field_array($fieldname)) {
-            // Set empty results
-            $results = [];
-
-            // Get parent fields
-            $parent_fields = $this->get_field($fieldname, false);
-
-            // Loop trough items
-            foreach ($parent_fields as $field_key => $map_string) {
-                // Split path in parts
-                $field_parts = explode('/', $map_string);
-
-                // Get the item value and set the results
-                $results[$field_key] = $this->get_recursive_item(
-                    $field_parts,
-                    $items,
-                    $string,
-                    $first_run
-                );
-            }
-
-            return $results;
-        }
-
-        // Get recursive fields
-        $fields = $this->get_field($fieldname, true);
-
-        // Get the items
-        $value = $this->get_recursive_item($fields, $items, $string, $first_run);
-
-        // Filter the results value and return
-        return $this->filter_maping_item($fieldname, $value);
+        return $requestUrl . $this->getSortString();
     }
 
-    public function get_query_string()
+    /**
+     * @todo move to separate URL builder
+     * @return string
+     */
+    protected function getQueryUrlParameter(): string
     {
-        // Set queries array
-        $queries = [];
-
-        if (!empty($this->query)) {
-            foreach ($this->query as $field => $value) {
-                // Set default compare
-                $compare = '=';
-
-                // Check if value is array
-                if (is_array($value)) {
-                    // Set compare and value
-                    $compare    = (isset($value['compare']) ? $value['compare'] : $compare);
-                    $value      = (isset($value['value']) ? $value['value'] : '');
-                }
-
-                // Get the right fieldname
-                $fieldname = $this->get_last_fieldname($field);
-
-                // Add the query
-                $queries[] = $fieldname . $compare . '"' . urlencode($value) . '"';
-            }
+        if (empty($this->query)) {
+            return '';
         }
 
-        // Create query string
+        $queries = [];
+        foreach ($this->query as $field => $value) {
+            $comparator = '=';
+
+            if (is_array($value)) {
+                $comparator = $value['compare'] ?? $comparator;
+                $value = $value['value'] ?? '';
+            }
+
+            $queries[] = sprintf(
+                '%s%s"%s"',
+                $this->getLastFieldname($field),
+                $comparator,
+                urlencode($value)
+            );
+        }
+
         return implode(' and ', $queries);
     }
 
-    public function get_sort_string()
+    /**
+     * @legacy
+     * @return string
+     */
+    protected function getSortString(): string
     {
-
-        // this has a sort by value
         if ($this->sort_by) {
             // Remove sort from string to prevent double appending
             $order = str_replace('sort.', '', $this->sort_order);
@@ -296,174 +303,42 @@ class Service
         return '';
     }
 
-    public function get_encoded_url($url)
+    /**
+     * @todo Move to separate request handler
+     * @param  string  $url
+     * @param  boolean $raw
+     * @return false|string|SimpleXMLElement
+     */
+    protected function doRequest($url, $raw = false)
     {
+        $response = wp_remote_get($url);
 
-        return str_replace(' ', '%20', $url);
-    }
+        if (is_wp_error($response)) {
+            throw new Exception($response->get_error_message());
+        }
 
-    public function get_request_url()
-    {
+        if (($response['response']['code'] ?? 400) >= 400) {
+            throw new Exception("Invalid response from server @ " . $url);
+        }
 
-        // Get the base url
-        $base_url       = $this->get_base_url();
-
-        // Set the query args
-        $args           = [
-            $this->get_field('startRecord')     => $this->offset,
-            $this->get_field('maximumRecords')  => $this->max_records,
-            $this->get_field('query')           => $this->get_query_string(),
-        ];
-
-        // Set the request url
-        $request_url = add_query_arg($args, $base_url);
-
-        // Get the sort string
-        $sort_string = $this->get_sort_string();
-
-        // Return the request url including the sort string
-        return $request_url . $sort_string;
-    }
-
-    public function convert_xml($string)
-    {
-
-        // Remove colons in xml element name
-        $string = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $string);
-
-        // Convert string to XMl object
-        $xml = simplexml_load_string($string);
-
-        return $xml;
+        return $raw ? $response['body'] : $this->convertToXml($response['body']);
     }
 
     /**
-     * Make the request
+     * @todo Move to separate converter
+     * @param  string $string
+     * @return SimpleXMLElement
      */
-    public function get_xml($url, $raw = false)
+    protected function convertToXml($string): SimpleXMLElement
     {
+        $string = preg_replace("/(<\/?)(\w+):([^>]*>)/", "$1$3", $string);
 
-        // Get cURL resource
-        $curl = curl_init();
+        $xml = simplexml_load_string($string);
 
-        // Set some options - we are passing in a useragent too here
-        curl_setopt_array($curl, [
-        CURLOPT_RETURNTRANSFER  => 1,
-        CURLOPT_URL             => $this->get_encoded_url($url),
-        ]);
-
-        // Send the request & save response to $response
-        $response = curl_exec($curl);
-
-
-        // Close request to clear up some resources
-        curl_close($curl);
-
-        // Return the XML
-        return ($raw ? $response : $this->convert_xml($response));
-    }
-
-    public function get_pagination_data()
-    {
-
-        // Get the records
-        $records    = $this->get_mapping_item('records');
-
-        // Return pagination array
-        return [
-            'max_num_records'   => $this->get_mapping_item('numberOfRecords', false, true),
-            'total_found'       => $this->total_found,
-            'first_item'        => $this->offset,
-            'last_item'         => (count($records) - 1) + $this->offset
-        ];
-    }
-
-    public function get_mapped_results()
-    {
-
-        // Set empty results array
-        $results    = [];
-
-        // Get the request url
-        $url        = $this->get_request_url();
-
-        // Get the xml
-        $this->xml  = $this->get_xml($url);
-
-        // Get the records
-        $records    = $this->get_mapping_item('records');
-
-        // Set the pagination data
-        $results['pagination']      = $this->get_pagination_data();
-
-        // Loop trought the records
-        foreach ($records as $record) {
-            // Set last record item variable
-            $this->last_record = $this->get_mapped_record($record);
-
-            // Add the mapped record as data record
-            $results['data'][] = $this->last_record;
+        if (! $xml) {
+            throw new Exception("Unable to load XML data");
         }
 
-        // Return the results
-        return $results;
-    }
-
-    public function get_last_record()
-    {
-
-        // Return the last found record item
-        return $this->last_record;
-    }
-
-    public function get_debug_results($raw = true)
-    {
-
-        // Set empty results array
-        $results    = [];
-
-        // Get the request url
-        $url        = $this->get_request_url();
-
-        // Return the xml
-        return $this->get_xml($url, $raw);
-    }
-
-    public function print_debug_results($raw = true)
-    {
-
-        $results = $this->get_debug_results($raw);
-
-        if ($raw) {
-            // Set XML headers
-            header("Content-type: text/xml");
-
-            // Output raw xml
-            echo $results;
-        } else {
-            echo '<pre>' . print_r($results, true) . '</pre>';
-
-            die();
-        }
-
-        exit;
-    }
-
-    public function get_mapped_record($record)
-    {
-
-        // Get fields that need formating
-        $created_at = $this->get_mapping_item('created_at', $record, true);
-        $updated_at = $this->get_mapping_item('updated_at', $record, true);
-
-        // Return the record
-        return [
-            'identifier'    => $this->get_mapping_item('identifier', $record, true),
-            'title'         => $this->get_mapping_item('title', $record, true),
-            'permalink'     => $this->get_mapping_item('permalink', $record, true),
-            'meta'          => $this->get_mapping_item('meta', $record, true),
-            'created_at'    => date('Y-m-d', strtotime($created_at)),
-            'updated_at'    => date('Y-m-d', strtotime($updated_at)),
-        ];
+        return $xml;
     }
 }

@@ -14,7 +14,7 @@ class Plugin
 
         $config = array_merge(
             require dirname(__DIR__) . '/config/container.php',
-            require dirname(__DIR__) . '/config/services.config.php',
+            require dirname(__DIR__) . '/config/config.php',
         );
 
         foreach ($config as $abstract => $factory) {
@@ -24,7 +24,7 @@ class Plugin
         $GLOBALS['ogpcontainer'] = $this->container;
     }
 
-    public function boot()
+    public function boot(): void
     {
         $this->container->get(Init::class)->register();
 
@@ -37,7 +37,7 @@ class Plugin
         register_deactivation_hook($this->container->get('plugin.file'), [$this, 'deactivation']);
     }
 
-    protected function registerServiceProviders()
+    protected function registerServiceProviders(): void
     {
         $this->container->get(Providers\RestRouteProvider::class)->register();
         $this->container->get(Providers\ImportProvider::class)->register();
@@ -47,18 +47,18 @@ class Plugin
         $this->container->get(Providers\MetaboxProvider::class)->register();
     }
 
-    protected function activation()
+    protected function activation(): void
     {
-        $this->container->get(Cronjobs::class)->schedule();
+        $this->container->get(Services\EventService::class)->schedule();
         $this->container->get(Init::class)->importOrganizations();
     }
 
-    public function deactivation()
+    public function deactivation(): void
     {
         // Do something on deactivation
     }
 
-    protected function loadTextDomain()
+    protected function loadTextDomain(): void
     {
         load_plugin_textdomain(
             'open-govpub',

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace SudwestFryslan\OpenGovernmentPublications\Providers;
 
 use SudwestFryslan\OpenGovernmentPublications\Container;
@@ -13,5 +15,5 @@ abstract class ServiceProvider implements ServiceProviderInterface
         $this->container = $container;
     }
 
-    abstract public function register();
+    abstract public function register(): void;
 }
