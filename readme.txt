@@ -1,10 +1,10 @@
 === Open Government Publications ===
-Contributors: Súdwest-Fryslân
+Contributors: Súdwest-Fryslân, sanderdekroon
 Tags: sudwestfryslan, officielebekendmakingen, government publications, owc
 Requires at least: 5.1
 Tested up to: 6.1
 Requires PHP: 7.4
-Stable tag: 2.0.0
+Stable tag: 2.0.1
  
 Import and publish Government Publications through the REST API.
 
@@ -23,6 +23,9 @@ Import and publish Government Publications through the REST API.
 Download this plugin through Github and upload it to the webserver.
 
 == Changelog ==
+
+= 2.0.1 - 28-07-2022 =
+* Added missing updater
 
 = 2.0.0 - 28-07-2022 =
 * Plugin rewrite

@@ -6,7 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.0.0] - 2022-07-??
+## [2.0.1] - 2022-07-28
+### Changed
+- Added missing updater
+
+## [2.0.0] - 2022-07-28
 ### Changed
 - Rewrite of most components
 - Start using Composer to load dependencies
