@@ -2,6 +2,9 @@
 
 namespace SudwestFryslan\OpenGovernmentPublications;
 
+use Throwable;
+use Puc_v4_Factory;
+
 class Plugin
 {
     protected Container $container;
@@ -28,13 +31,15 @@ class Plugin
     {
         $this->container->get(Init::class)->register();
 
-        $this->registerServiceProviders();
-
         $this->loadTextDomain();
+
+        $this->registerServiceProviders();
 
         register_activation_hook($this->container->get('plugin.file'), [$this, 'activation']);
 
         register_deactivation_hook($this->container->get('plugin.file'), [$this, 'deactivation']);
+
+        $this->checkForUpdate();
     }
 
     protected function registerServiceProviders(): void
@@ -65,5 +70,18 @@ class Plugin
             false,
             basename($this->container->get('plugin.path')) . '/languages'
         );
+    }
+
+    protected function checkForUpdate(): void
+    {
+        try {
+            \Puc_v4_Factory::buildUpdateChecker(
+                'https://github.com/OpenWebconcept/open-government-publications/',
+                $this->container->get('plugin.file'),
+                'open-government-publications'
+            );
+        } catch (\Throwable $e) {
+            error_log($e->getMessage());
+        }
     }
 }
