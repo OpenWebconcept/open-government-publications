@@ -16,7 +16,7 @@ This WordPress plugin imports government publications from [officielebekendmakin
 ## Installation
 
 ### For users
-1. Download the latest release
+1. Download the latest release from [the releases page](https://github.com/OpenWebconcept/open-government-publications/releases) 
 2. Unzip and move all files to the `/wp-content/plugins/open-government-publications` directory.
 3. Activate the plugin through the WordPress admin interface
 4. Open the plugin settings page by navigating to "Open Publications" -> "Settings".
