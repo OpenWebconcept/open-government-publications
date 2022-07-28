@@ -1,9 +1,11 @@
 name: Release
 
-on:
-  push:
-    tags:
-      - '*'
+# on:
+#   push:
+#     tags:
+#       - '*'
+
+on: push
 
 jobs:
   release:
@@ -22,5 +24,5 @@ jobs:
         uses: fnkr/github-action-ghr@v1
         env:
           GHR_COMPRESS: zip
-          GHR_PATH: dist/
+          GHR_PATH: releases/
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
