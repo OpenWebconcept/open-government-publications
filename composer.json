@@ -23,7 +23,7 @@
         }
     ],
     "require": {
-        "php": "~7.4",
+        "php": "^7.4|^8.0",
         "yahnis-elsts/plugin-update-checker": "^4.11"
     },
     "require-dev": {
