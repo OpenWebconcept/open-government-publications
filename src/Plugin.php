@@ -12,7 +12,7 @@ class Plugin
     public function __construct(Container $container = null)
     {
         $this->container = $container ?: new Container();
-        // And this is were the magic happens ( ͡° ͜ʖ ͡°)
+        // And this is where the magic happens ( ͡° ͜ʖ ͡°)
         $this->container->set(Container::class, fn($container) => $container);
 
         $config = array_merge(
@@ -75,12 +75,12 @@ class Plugin
     protected function checkForUpdate(): void
     {
         try {
-            \Puc_v4_Factory::buildUpdateChecker(
+            Puc_v4_Factory::buildUpdateChecker(
                 'https://github.com/OpenWebconcept/open-government-publications/',
                 $this->container->get('plugin.file'),
                 'open-government-publications'
             );
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             error_log($e->getMessage());
         }
     }
