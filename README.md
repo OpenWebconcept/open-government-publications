@@ -8,9 +8,10 @@ This WordPress plugin imports government publications from [officielebekendmakin
     - [For users](#for-users)
     - [For developers](#for-developers)
 * [Changelog](#changelog)
-* [REST API](#rest-api)
+* [API Endpoints](#api-endpoints)
+    * [Search publications](#search-publications)
+    * [Publication types](#publication-types)
 * [Testing](#testing)
-* [Contributing](#contributing)
 * [Security](#security)
 
 ## Installation
