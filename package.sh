@@ -23,7 +23,8 @@ rm -rf ./.git ./composer.json ./composer.lock ./package.sh \
     ./.vscode ./workspace.code-workspace ./bitbucket-pipelines.yml \
     ./.phplint-cache ./.phpunit.result.cache ./.editorconfig ./.eslintignore \
     ./.eslintrc.json ./.gitignore ./phpunit.xml.dist ./psalm.xml ./releases \
-    ./babel.config.json ./package.json ./package-lock.json ./tests ./assets/src
+    ./babel.config.json ./package.json ./package-lock.json ./tests ./assets/src \
+    ./DOCKER_ENV ./docker_tag ./output.log ./.github
     
 cd ../
 
