@@ -1,15 +1,19 @@
 #!/bin/bash 
 
-mkdir -p releases
-
-# Remove old packages
-rm -rf ./releases/open-government-publications ./releases/open-government-publications.zip
+## Remove old packages
+rm -rf ./releases
+mkdir -p ./releases
 
 # Create an optimized build of the JS app
 npm run build:prod > /dev/null
 
 # Copy current dir to tmp
-rsync -ua . ./releases/open-government-publications/
+rsync \
+    -ua \
+    --exclude='vendor/*' \
+    --exclude='node_modules/*' \
+    --exclude='releases/*' \
+    . ./releases/open-government-publications/
 
 # Remove current vendor & node_modules folder (if any) 
 # and install the dependencies without dev packages.
