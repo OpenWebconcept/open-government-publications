@@ -52,7 +52,7 @@ class Plugin
         $this->container->get(Providers\MetaboxProvider::class)->register();
     }
 
-    protected function activation(): void
+    public function activation(): void
     {
         $this->container->get(Services\EventService::class)->schedule();
         $this->container->get(Init::class)->importOrganizations();
