@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.4] - 2022-08-18
+### Changed
+* Fix updater using release assets
+* Fix unaccessible callback method
+
 ## [2.0.3] - 2022-08-18
 ### Changed
 * Replaced node-sass with (dart-)sass
