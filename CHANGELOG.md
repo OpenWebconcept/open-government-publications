@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.3] - 2022-08-18
+### Changed
+* Replaced node-sass with (dart-)sass
+* Fix PHP 8 deprecation notice
+* Fix `rsync` issue when building packaged release
+* Update Plugin Update Checker to 4.13
+
 ## [2.0.2] - 2022-08-02
 ### Changed
 * Fix readme.md file

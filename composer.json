@@ -24,7 +24,7 @@
     ],
     "require": {
         "php": "^7.4|^8.0",
-        "yahnis-elsts/plugin-update-checker": "^4.11"
+        "yahnis-elsts/plugin-update-checker": "^4.13"
     },
     "require-dev": {
         "10up/wp_mock": "^0.4.2",
@@ -59,6 +59,9 @@
         }
     },
     "config": {
-        "sort-packages": true
+        "sort-packages": true,
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }
