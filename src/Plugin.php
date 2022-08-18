@@ -52,7 +52,7 @@ class Plugin
         $this->container->get(Providers\MetaboxProvider::class)->register();
     }
 
-    protected function activation(): void
+    public function activation(): void
     {
         $this->container->get(Services\EventService::class)->schedule();
         $this->container->get(Init::class)->importOrganizations();
@@ -75,11 +75,13 @@ class Plugin
     protected function checkForUpdate(): void
     {
         try {
-            Puc_v4_Factory::buildUpdateChecker(
+            $updater = Puc_v4_Factory::buildUpdateChecker(
                 'https://github.com/OpenWebconcept/open-government-publications/',
                 $this->container->get('plugin.file'),
                 'open-government-publications'
             );
+
+            $updater->getVcsApi()->enableReleaseAssets();
         } catch (Throwable $e) {
             error_log($e->getMessage());
         }
