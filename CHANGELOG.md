@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.5] - 2022-08-30
+### Changed
+* Fix missing `max_num_pages` value
+
 ## [2.0.4] - 2022-08-18
 ### Changed
 * Fix updater using release assets
