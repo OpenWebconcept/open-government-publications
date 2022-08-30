@@ -68,7 +68,7 @@ class RestRouteProvider extends ServiceProvider
                 'found_posts'       => (int) $query->found_posts,
                 'posts_per_page'    => (int) $query->query['posts_per_page'],
                 'paged'             => (int) $query->query['paged'],
-                'max_num_pages'     => (int) $query->max_num_page
+                'max_num_pages'     => (int) $query->max_num_pages
             ],
         ];
 
