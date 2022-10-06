@@ -42,7 +42,7 @@ class Settings extends ArrayValueObject
         return ! $this->isEmpty($name);
     }
 
-    public function save(string $name, array $value): self
+    public function save(string $name, $value): self
     {
         $this->data[$name] = $value;
         $this->storage->save($this->optionKey, $this->data);
@@ -50,7 +50,7 @@ class Settings extends ArrayValueObject
         return $this;
     }
 
-    public function update(string $name, array $value): self
+    public function update(string $name, $value): self
     {
         $this->data[$name] = $value;
         $this->storage->update($this->optionKey, $this->data);
