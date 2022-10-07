@@ -60,7 +60,7 @@ class Plugin
 
     public function deactivation(): void
     {
-        // Do something on deactivation
+        $this->container->get(Services\EventService::class)->unschedule();
     }
 
     protected function loadTextDomain(): void
