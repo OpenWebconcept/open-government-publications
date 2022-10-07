@@ -7,21 +7,25 @@ use DateTime;
 
 class EventService
 {
+    protected array $events  = [
+        'open_govpub_import_organization'           => 'daily',
+        'open_govpub_check_import_publications'     => 'daily',
+        'open_govpub_task_import_publications'      => 'hourly',
+    ];
+
     public function schedule(): void
     {
-        // Add the import organization schedule
-        if (! wp_next_scheduled('open_govpub_import_organization')) {
-            wp_schedule_event(time(), 'daily', 'open_govpub_import_organization');
+        foreach ($this->events as $event => $interval) {
+            if (! wp_next_scheduled($event)) {
+                wp_schedule_event(time(), $interval, $event);
+            }
         }
+    }
 
-        // Add the publications schedule thats queues the import
-        if (! wp_next_scheduled('open_govpub_check_import_publications')) {
-            wp_schedule_event(time(), 'daily', 'open_govpub_check_import_publications');
-        }
-
-        // Add the import publications schedule
-        if (! wp_next_scheduled('open_govpub_task_import_publications')) {
-            wp_schedule_event(time(), 'hourly', 'open_govpub_task_import_publications');
+    public function unschedule(): void
+    {
+        foreach (array_keys($this->events) as $event) {
+            wp_clear_scheduled_hook($event);
         }
     }
 
@@ -34,6 +38,11 @@ class EventService
         } catch (Throwable $e) {
             return null;
         }
+    }
+
+    public function getEvents(): array
+    {
+        return $this->events;
     }
 
     public function getFormattedSchedule(string $eventName, string $format): string
