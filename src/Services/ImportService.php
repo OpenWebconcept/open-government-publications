@@ -33,12 +33,16 @@ class ImportService
 
     public function isImportCheckLocked(): bool
     {
-        return $this->storage->get('govpub_import_check_locked', false);
+        return (bool) $this->storage->get('govpub_import_check_locked', false);
     }
 
     public function lockImportCheck(?int $duration = null): bool
     {
-        return $this->storage->save('govpub_import_check_locked', true, $duration ?: $this->lockTime);
+        return $this->storage->save(
+            'govpub_import_check_locked',
+            true,
+            ($duration ?: $this->lockTime)
+        );
     }
 
     public function unlockImportCheck(): bool
