@@ -10,7 +10,7 @@ use RuntimeException;
 
 class Container
 {
-    /** @var array<int|string, callable> */
+    /** @var array<string, callable> */
     protected array $bindings = [];
 
     /**
@@ -31,8 +31,10 @@ class Container
 
     /**
      * Get the concretion of the given abstract.
-     * @param  string|class-string $abstract
-     * @return ($abstract is class-string ? object : mixed)
+     * @template T
+     * @param  string|class-string<T> $abstract
+     * @param  array $args
+     * @return ($abstract is class-string ? T : mixed)
      */
     public function get(string $abstract, ...$args)
     {
@@ -40,7 +42,7 @@ class Container
             return $this->bindings[$abstract]($this, ...$args);
         }
 
-        return $this->autoBuildAbstract($abstract);
+        return $this->autoBuildAbstract($abstract, $args);
     }
 
     public function has(string $abstract): bool
@@ -48,15 +50,16 @@ class Container
         return isset($this->bindings[$abstract]);
     }
 
-    protected function autoBuildAbstract(string $abstract): object
+    protected function autoBuildAbstract(string $abstract, array $dependencies = []): object
     {
         if (class_exists($abstract) === false) {
             throw new RuntimeException("Unable to autobuild {$abstract}: class does not exist");
         }
 
         $reflection = new ReflectionClass($abstract);
-        $dependencies = $this->buildDependencies($reflection);
-
+        if (empty($dependencies)) {
+            $dependencies = $this->buildDependencies($reflection);
+        }
 
         return $reflection->newInstanceArgs($dependencies);
     }
@@ -97,7 +100,7 @@ class Container
             return $type->getName();
         }
 
-        if (class_exists('ReflectionUnionType') && $type instanceof \ReflectionUnionType) {
+        if ($type instanceof \ReflectionUnionType) {
             $types = $type->getTypes();
 
             return $this->getReflectionTypeName(reset($types));
