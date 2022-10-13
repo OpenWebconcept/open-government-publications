@@ -4,7 +4,7 @@ Tags: sudwestfryslan, officielebekendmakingen, government publications, owc
 Requires at least: 5.1
 Tested up to: 6.1
 Requires PHP: 7.4
-Stable tag: 2.0.5
+Stable tag: 2.0.6
  
 Import and publish Government Publications through the REST API.
 
@@ -23,6 +23,10 @@ Import and publish Government Publications through the REST API.
 Download this plugin through Github and upload it to the webserver.
 
 == Changelog ==
+
+= 2.0.6 - 2022-10-13 =
+* Added: Invoke import and check methods through WP CLI
+* Changed: Fix invalid typehints and returntypes
 
 = 2.0.5 - 30-08-2022 =
 * Fix missing `max_num_pages` value

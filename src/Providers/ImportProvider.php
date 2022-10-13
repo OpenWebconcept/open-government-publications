@@ -2,8 +2,11 @@
 
 namespace SudwestFryslan\OpenGovernmentPublications\Providers;
 
+use WP_CLI;
 use SudwestFryslan\OpenGovernmentPublications\Service;
 use SudwestFryslan\OpenGovernmentPublications\Container;
+use SudwestFryslan\OpenGovernmentPublications\Commands\Check;
+use SudwestFryslan\OpenGovernmentPublications\Commands\Import;
 use SudwestFryslan\OpenGovernmentPublications\Entities\Settings;
 use SudwestFryslan\OpenGovernmentPublications\Entities\Publication;
 use SudwestFryslan\OpenGovernmentPublications\Entities\ImportOptions;
@@ -14,7 +17,7 @@ use SudwestFryslan\OpenGovernmentPublications\Entities\Service as ApiService;
 
 class ImportProvider extends ServiceProvider
 {
-    protected int $max_import = 10;
+    protected int $max_import = 100;
     protected int $limit_import = 3000;
 
     protected Settings $settings;
@@ -42,17 +45,31 @@ class ImportProvider extends ServiceProvider
         add_action('open_govpub_check_import_publications', [$this, 'check_import_publications']);
         add_action('open_govpub_task_import_publications', [$this, 'run_import_publications']);
         add_action('wp_ajax_import_open_govpub', [$this, 'import_open_govpub_data']);
+
+        if (class_exists('WP_CLI')) {
+            $check = $this->container->get(Check::class, $this);
+            $import = $this->container->get(Import::class, $this);
+
+            WP_CLI::add_command($check->getCommand(), $check);
+            WP_CLI::add_command($import->getCommand(), $import);
+        }
     }
 
+    /**
+     * @todo move to separate provider/service
+     */
     public function check_import_publications()
     {
+        $this->log('Event: check_import_publications');
         if ($this->importService->isImportCheckLocked()) {
+            $this->log('Aborting, import check locked');
             return false;
         }
 
         $totalImport = $this->options->get('total_import', []);
 
         if (! empty($totalImport)) {
+            $this->log('Aborting, total import is not empty');
             return $totalImport;
         }
 
@@ -72,11 +89,16 @@ class ImportProvider extends ServiceProvider
         return $totalImport;
     }
 
+    /**
+     * @todo move to separate provider/service
+     */
     public function run_import_publications()
     {
+        $this->log('Event: run_import_publications');
         $totalImport = $this->options->get('total_import', []);
 
         if ($this->importService->isImportLocked() || empty($totalImport)) {
+            $this->log('Aborting, import check locked or no total import available');
 
             /**
              * @todo better error handling / result feedback
@@ -88,6 +110,7 @@ class ImportProvider extends ServiceProvider
 
         // Check if import completed
         if ($totalImport['status'] >= $totalImport['max_num']) {
+            $this->log('Aborting, import has been completed');
             $this->save_services_last_dates();
 
             $this->options->save('last_import_date', $totalImport['import_date']);
@@ -108,6 +131,9 @@ class ImportProvider extends ServiceProvider
         } catch (\Throwable $e) {
             $this->importService->unlockImport();
 
+            $this->log('Aborting, import has encountered an error');
+            $this->log('Error: ' . $e->getMessage());
+
             error_log($e->getMessage());
 
             /**
@@ -119,6 +145,7 @@ class ImportProvider extends ServiceProvider
 
         // If the import failed, abort.
         if (! $results || ! isset($results['imported'])) {
+            $this->log('Aborting, import has encountered an error and not returned results');
             $this->importService->unlockImport();
 
             return $totalImport;
@@ -138,6 +165,8 @@ class ImportProvider extends ServiceProvider
         $currentImport = (array) $this->options->current_import;
         $currentImport[$service['service_id']] = $new_status;
         $this->options->update('current_import', $currentImport);
+
+        $this->log('Finished, a total of ' . $imported_i . ' items ar now available.');
 
         $totalImport = $this->recreate_total_import_by_current_import();
 
@@ -350,9 +379,17 @@ class ImportProvider extends ServiceProvider
     protected function savePublications($results, ApiService $apiService): int
     {
         $saved = 0;
+        $total = count($results);
         foreach ($results as $result) {
-            $this->savePublication($result, $apiService);
+            $publication = $this->savePublication($result, $apiService);
             $saved++;
+
+            $this->log(sprintf(
+                '[%d/%d] Publication "%s" saved.',
+                $saved,
+                $total,
+                $publication->identifier()
+            ));
         }
 
         return $saved;
@@ -377,7 +414,9 @@ class ImportProvider extends ServiceProvider
      */
     protected function import_by_import_service($import_service)
     {
+        $this->log('Starting import of ' . $import_service['service_id']);
         if ($this->settings->isEmpty('creator')) {
+            $this->log('Aborting, no creator set');
             return false;
         }
 
@@ -394,14 +433,25 @@ class ImportProvider extends ServiceProvider
             ]
         ]);
 
+        $this->log('Service created, resolving results');
+
         $results = $service->get_mapped_results();
 
+        $this->log(sprintf(
+            'Results resolved. Found %s records, importing %s records.',
+            $results['pagination']['total_found'] ?? 'ERR',
+            $this->max_import
+        ));
+
         if (! isset($results['data'])) {
+            $this->log('Aborting, API returned no data');
             return false;
         }
 
         $last_record = $service->get_last_record();
         $countSaved = $this->savePublications($results['data'], $apiService);
+
+        $this->log('Publications saved, count ' . $countSaved);
 
         return [
             'imported'          => $countSaved,
@@ -410,5 +460,12 @@ class ImportProvider extends ServiceProvider
             'date_offset'       => $import_service['date_offset'],
             'last_record_date'  => $last_record['created_at'],
         ];
+    }
+
+    protected function log(string $message): void
+    {
+        if (class_exists(WP_CLI::class)) {
+            WP_CLI::log('[OpenGovImport] ' . $message);
+        }
     }
 }
