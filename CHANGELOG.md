@@ -6,27 +6,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.6] - 2022-10-13
+### Added
+- Invoke import and check methods through WP CLI
+
+### Changed
+- Fix invalid typehints and returntypes
+
 ## [2.0.5] - 2022-08-30
 ### Changed
-* Fix missing `max_num_pages` value
+- Fix missing `max_num_pages` value
 
 ## [2.0.4] - 2022-08-18
 ### Changed
-* Fix updater using release assets
-* Fix unaccessible callback method
+- Fix updater using release assets
+- Fix unaccessible callback method
 
 ## [2.0.3] - 2022-08-18
 ### Changed
-* Replaced node-sass with (dart-)sass
-* Fix PHP 8 deprecation notice
-* Fix `rsync` issue when building packaged release
-* Update Plugin Update Checker to 4.13
+- Replaced node-sass with (dart-)sass
+- Fix PHP 8 deprecation notice
+- Fix `rsync` issue when building packaged release
+- Update Plugin Update Checker to 4.13
 
 ## [2.0.2] - 2022-08-02
 ### Changed
-* Fix readme.md file
-* Fix build process
-* Fix typos
+- Fix readme.md file
+- Fix build process
+- Fix typos
 
 ## [2.0.1] - 2022-07-28
 ### Changed
