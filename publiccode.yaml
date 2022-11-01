@@ -1,0 +1,21 @@
+name: "open-government-publications"
+
+publiccodeYmlVersion: 1.0
+url: "https://github.com/OpenWebconcept/open-government-publications"
+
+platforms:
+  - "web"
+
+categories:
+  - "application-development"
+
+softwareType: "softwareAddon"
+
+description:
+  localisedName: "Plugin Open Government Publications"
+  shortDescription: "Dit is de basis plugin die je nodig hebt om van een normale WP installatie een OpenPDC kan maken."
+  longDescription: "Dit is de basis plugin die je nodig hebt om van een normale WP installatie een OpenPDC kan maken."
+
+nl:
+  commonground:
+    layerType: "service"
