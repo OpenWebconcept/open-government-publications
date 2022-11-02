@@ -1,5 +1,8 @@
 name: "open-government-publications"
 
+applicationSuite:
+  name: "OpenWebconcept"
+
 publiccodeYmlVersion: 1.0
 url: "https://github.com/OpenWebconcept/open-government-publications"
 
@@ -19,3 +22,10 @@ description:
 nl:
   commonground:
     layerType: "service"
+
+dependsOn:
+  open:
+    - name: "openpub-base"
+    - versionMin: 2.0.18
+    - name: "WordPress"
+    - versionMin: 6.0.3
