@@ -16,8 +16,8 @@ softwareType: "softwareAddon"
 
 description:
   localisedName: "Plugin Open Government Publications"
-  shortDescription: "Dit is de basis plugin die je nodig hebt om van een normale WP installatie een OpenPDC kan maken."
-  longDescription: "Dit is de basis plugin die je nodig hebt om van een normale WP installatie een OpenPDC kan maken."
+  shortDescription: "Deze WordPress plugin importeert overheidspublicaties van officielebekendmakingen.nl en maakt ze beschikbaar via de REST API."
+  longDescription: "Deze WordPress plugin importeert overheidspublicaties van officielebekendmakingen.nl en maakt ze beschikbaar via de REST API."
 
 nl:
   commonground:
@@ -25,7 +25,5 @@ nl:
 
 dependsOn:
   open:
-    - name: "openpub-base"
-    - versionMin: 2.0.18
     - name: "WordPress"
     - versionMin: 6.0.3
