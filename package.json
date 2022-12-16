@@ -15,7 +15,6 @@
     "are-you-es5": "^2.1.2",
     "autoprefixer": "^10.4.1",
     "babel-loader": "^8.2.3",
-    "browser-sync": "^2.12.8",
     "core-js": "^3.20.2",
     "cross-env": "^7.0.3",
     "css-loader": "^6.5.1",
