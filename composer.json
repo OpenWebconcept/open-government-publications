@@ -1,6 +1,6 @@
 {
     "name": "sudwestfryslan/open-government-publications",
-    "type": "library",
+    "type": "wordpress-plugin",
     "description": "Open Government Publications",
     "keywords": [
         "sudwestfryslan",
