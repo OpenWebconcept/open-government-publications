@@ -10,7 +10,7 @@ use SudwestFryslan\OpenGovernmentPublications\Support\StorageProviders\StoragePr
 return [
     'plugin.name'       => 'Open Government Publications',
     'plugin.slug'       => 'open-government-publications',
-    'plugin.version'    => '2.0.6',
+    'plugin.version'    => '2.0.7',
     'plugin.file'       => dirname(__DIR__) . '/open-government-publications.php',
     'plugin.path'       => dirname(__DIR__),
     'plugin.url'        => plugins_url(basename(dirname(__DIR__))),
