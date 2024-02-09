@@ -58,7 +58,7 @@ class ArrayValueObject implements ArrayAccess, Iterator
     }
 
     /**
-     * @param  array|object $data
+     * @param array|object $data
      */
     protected function hydrate($data): void
     {

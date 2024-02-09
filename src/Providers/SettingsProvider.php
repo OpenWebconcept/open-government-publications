@@ -6,8 +6,8 @@ namespace SudwestFryslan\OpenGovernmentPublications\Providers;
 
 use WP_Query;
 use SudwestFryslan\OpenGovernmentPublications\Container;
-use SudwestFryslan\OpenGovernmentPublications\Entities\ImportOptions;
 use SudwestFryslan\OpenGovernmentPublications\Entities\Settings;
+use SudwestFryslan\OpenGovernmentPublications\Entities\ImportOptions;
 
 class SettingsProvider extends ServiceProvider
 {
@@ -36,7 +36,7 @@ class SettingsProvider extends ServiceProvider
         add_settings_section(
             'open_govpub_settings_section',
             __('Algemeen', 'open-govpub'),
-            fn() => '',
+            fn () => '',
             'open_govpub'
         );
 
@@ -100,15 +100,18 @@ class SettingsProvider extends ServiceProvider
         switch ($reset) {
             case 'statistics':
                 $this->options->reset();
+
                 break;
             case 'posts':
                 $this->options->reset();
                 $deleted = $this->deletePublications();
+
                 break;
             case 'all':
                 $this->options->reset();
                 $this->settings->reset();
                 $deleted = $this->deletePublications();
+
                 break;
             default:
                 break;

@@ -2,8 +2,8 @@
 
 namespace SudwestFryslan\OpenGovernmentPublications\Services;
 
-use Throwable;
 use DateTime;
+use Throwable;
 
 class EventService
 {

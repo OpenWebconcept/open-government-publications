@@ -5,8 +5,8 @@ namespace SudwestFryslan\OpenGovernmentPublications;
 use DateTime;
 use Exception;
 use SimpleXMLElement;
-use SudwestFryslan\OpenGovernmentPublications\Entities\Service as ServiceEntity;
 use SudwestFryslan\OpenGovernmentPublications\Entities\ServiceRecord;
+use SudwestFryslan\OpenGovernmentPublications\Entities\Service as ServiceEntity;
 
 class Service
 {
@@ -120,6 +120,20 @@ class Service
         ];
     }
 
+    public function getLastFieldname($name, $split = true, $splitCharacter = ':')
+    {
+        $parts = $this->getField($name, true);
+        $lastPart = end($parts);
+
+        if ($split) {
+            $lastParts = explode($splitCharacter, $lastPart);
+
+            return end($lastParts);
+        }
+
+        return $lastPart;
+    }
+
     protected function getMappedRecord(SimpleXMLElement $record): ServiceRecord
     {
         $created_at = $this->get_mapping_item('created_at', $record, true);
@@ -166,7 +180,7 @@ class Service
 
     /**
      * @param  string       $fieldname
-     * @param  bool $inParts
+     * @param  bool         $inParts
      * @return string|array
      */
     protected function getField(string $fieldname, bool $inParts = false)
@@ -180,20 +194,6 @@ class Service
         return $field;
     }
 
-    public function getLastFieldname($name, $split = true, $splitCharacter = ':')
-    {
-        $parts = $this->getField($name, true);
-        $lastPart = end($parts);
-
-        if ($split) {
-            $lastParts = explode($splitCharacter, $lastPart);
-
-            return end($lastParts);
-        }
-
-        return $lastPart;
-    }
-
     protected function get_recursive_item(array $fields, $items = false, $string = false, bool $first_run = true)
     {
         if (! $items && $first_run) {
@@ -202,7 +202,7 @@ class Service
 
         // If no fields left, return the items
         if (empty($fields)) {
-            return ($string && $items ? $items->__toString() : $items);
+            return $string && $items ? $items->__toString() : $items;
         }
 
         // Get first field
@@ -305,8 +305,8 @@ class Service
 
     /**
      * @todo Move to separate request handler
-     * @param  string  $url
-     * @param  boolean $raw
+     * @param  string                        $url
+     * @param  bool                          $raw
      * @return false|string|SimpleXMLElement
      */
     protected function doRequest($url, $raw = false)
@@ -326,7 +326,7 @@ class Service
 
     /**
      * @todo Move to separate converter
-     * @param  string $string
+     * @param  string           $string
      * @return SimpleXMLElement
      */
     protected function convertToXml($string): SimpleXMLElement

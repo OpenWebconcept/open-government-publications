@@ -13,7 +13,7 @@ class Plugin
     {
         $this->container = $container ?: new Container();
         // And this is where the magic happens ( ͡° ͜ʖ ͡°)
-        $this->container->set(Container::class, fn($container) => $container);
+        $this->container->set(Container::class, fn ($container) => $container);
 
         $config = array_merge(
             require dirname(__DIR__) . '/config/container.php',
@@ -42,16 +42,6 @@ class Plugin
         $this->checkForUpdate();
     }
 
-    protected function registerServiceProviders(): void
-    {
-        $this->container->get(Providers\RestRouteProvider::class)->register();
-        $this->container->get(Providers\ImportProvider::class)->register();
-        $this->container->get(Providers\PostTypeProvider::class)->register();
-        $this->container->get(Providers\SettingsProvider::class)->register();
-        $this->container->get(Providers\AdminMenuProvider::class)->register();
-        $this->container->get(Providers\MetaboxProvider::class)->register();
-    }
-
     public function activation(): void
     {
         $this->container->get(Services\EventService::class)->schedule();
@@ -61,6 +51,16 @@ class Plugin
     public function deactivation(): void
     {
         $this->container->get(Services\EventService::class)->unschedule();
+    }
+
+    protected function registerServiceProviders(): void
+    {
+        $this->container->get(Providers\RestRouteProvider::class)->register();
+        $this->container->get(Providers\ImportProvider::class)->register();
+        $this->container->get(Providers\PostTypeProvider::class)->register();
+        $this->container->get(Providers\SettingsProvider::class)->register();
+        $this->container->get(Providers\AdminMenuProvider::class)->register();
+        $this->container->get(Providers\MetaboxProvider::class)->register();
     }
 
     protected function loadTextDomain(): void

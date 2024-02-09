@@ -2,7 +2,6 @@
 
 namespace SudwestFryslan\OpenGovernmentPublications\Services;
 
-use Throwable;
 use Exception;
 use SudwestFryslan\OpenGovernmentPublications\Entities\Service;
 use SudwestFryslan\OpenGovernmentPublications\Entities\Publication;

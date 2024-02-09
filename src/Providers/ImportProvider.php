@@ -63,6 +63,7 @@ class ImportProvider extends ServiceProvider
         $this->log('Event: check_import_publications');
         if ($this->importService->isImportCheckLocked()) {
             $this->log('Aborting, import check locked');
+
             return false;
         }
 
@@ -70,6 +71,7 @@ class ImportProvider extends ServiceProvider
 
         if (! empty($totalImport)) {
             $this->log('Aborting, total import is not empty');
+
             return $totalImport;
         }
 
@@ -417,6 +419,7 @@ class ImportProvider extends ServiceProvider
         $this->log('Starting import of ' . $import_service['service_id']);
         if ($this->settings->isEmpty('creator')) {
             $this->log('Aborting, no creator set');
+
             return false;
         }
 
@@ -445,6 +448,7 @@ class ImportProvider extends ServiceProvider
 
         if (! isset($results['data'])) {
             $this->log('Aborting, API returned no data');
+
             return false;
         }
 

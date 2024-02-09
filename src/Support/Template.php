@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace SudwestFryslan\OpenGovernmentPublications\Support;
 
 use InvalidArgumentException;
-use SudwestFryslan\OpenGovernmentPublications\Support\PathResolver;
 
 abstract class Template
 {

@@ -15,13 +15,13 @@ class Container
 
     /**
      * Set an abstract with the given factory.
-     * @param string $abstract
+     * @param string         $abstract
      * @param callable|mixed $factory
      */
     public function set(string $abstract, $factory): Container
     {
         if (! is_callable($factory)) {
-            $factory = fn() => $factory;
+            $factory = fn () => $factory;
         }
 
         $this->bindings[$abstract] = $factory;
@@ -32,8 +32,8 @@ class Container
     /**
      * Get the concretion of the given abstract.
      * @template T
-     * @param  string|class-string<T> $abstract
-     * @param  array $args
+     * @param  string|class-string<T>                  $abstract
+     * @param  array                                   $args
      * @return ($abstract is class-string ? T : mixed)
      */
     public function get(string $abstract, ...$args)
@@ -66,7 +66,7 @@ class Container
 
     /**
      * Build dependencies for the given reflected class.
-     * @param  ReflectionClass $reflection
+     * @param  ReflectionClass   $reflection
      * @return array<int, mixed>
      */
     protected function buildDependencies(ReflectionClass $reflection): array

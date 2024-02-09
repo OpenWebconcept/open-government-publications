@@ -6,11 +6,8 @@ use WP_REST_Request;
 
 class SearchQueryBuilder
 {
-    protected array $defaultArguments = [
-        'post_type'         => 'open_govpub',
-    ];
-
     protected array $query;
+    protected array $defaultArguments = ['post_type' => 'open_govpub'];
 
     public function __construct(array $query = [])
     {
@@ -84,7 +81,7 @@ class SearchQueryBuilder
 
     /**
      * @param string $argument
-     * @param mixed $value
+     * @param mixed  $value
      */
     public function setArgument(string $argument, $value): self
     {
