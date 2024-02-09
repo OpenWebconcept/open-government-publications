@@ -1,11 +1,11 @@
 {
   "name": "open-government-publications",
-  "version": "2.0.7.1",
+  "version": "2.0.8",
   "description": "Open Government Publications",
   "private": true,
   "author": "",
   "wordpress": {
-    "tested": "6.1",
+    "tested": "6.4",
     "required": "5.1"
   },
   "devDependencies": {

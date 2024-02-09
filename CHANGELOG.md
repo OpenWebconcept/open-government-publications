@@ -4,7 +4,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.0.8] - 2024-02-09
+- Changed: set license to EUPL 1.2
+- Changed: updated dependencies
+
+## [2.0.7] - 2023-02-23
+- Added: composer support
+- Changed: updated dependencies
 
 ## [2.0.6] - 2022-10-13
 ### Added
