@@ -13,6 +13,12 @@
     "license": "proprietary",
     "authors": [
         {
+            "name": "Chris Jorritsma",
+            "email": "c.jorritsma@sudwestfryslan.nl",
+            "homepage": "https://github.com/ChrisSudwestFryslan",
+            "role": "Developer"
+        },
+        {
             "name": "Sander de Kroon",
             "email": "sander@dekroon.xyz",
             "homepage": "https://github.com/sanderdekroon",
