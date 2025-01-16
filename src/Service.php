@@ -70,7 +70,7 @@ class Service
 
     public function set_default_sort(): self
     {
-        $this->sort_by = $this->getLastFieldname('created_at');
+        $this->sort_by = $this->getLastFieldname('date');
 
         return $this;
     }
@@ -280,7 +280,7 @@ class Service
                 '%s%s"%s"',
                 $this->getLastFieldname($field),
                 $comparator,
-                urlencode($value)
+                $value
             );
         }
 
@@ -297,7 +297,7 @@ class Service
             // Remove sort from string to prevent double appending
             $order = str_replace('sort.', '', $this->sort_order);
 
-            return ' sortby ' . $this->sort_by . '/sort.' . $order;
+            return urlencode(' sortby ' . $this->sort_by . '/sort.' . $order);
         }
 
         return '';
