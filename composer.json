@@ -10,7 +10,7 @@
         "owc"
     ],
     "homepage": "https://sudewestfryslan.nl",
-    "license": "proprietary",
+    "license": "EUPL-1.2",
     "authors": [
         {
             "name": "Chris Jorritsma",
@@ -29,7 +29,7 @@
         }
     ],
     "require": {
-        "php": "^7.4|^8.0",
+        "php": "^8.1",
         "yahnis-elsts/plugin-update-checker": "^4.13"
     },
     "require-dev": {
