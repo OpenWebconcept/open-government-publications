@@ -286,7 +286,7 @@ class ImportProvider extends ServiceProvider
             $service->set_limited_offset()->set_max_records(1);
             $service->set_query([
                 'creator'       => $this->settings->creator,
-                'created_at'    => [
+                'date'    => [
                     'value'         => date_i18n('Y-m-d', strtotime($last_date)),
                     'compare'       => '>='
                 ]
@@ -430,7 +430,7 @@ class ImportProvider extends ServiceProvider
         $service->set_max_records($this->max_import);
         $service->set_query([
             'creator'       => $this->settings->creator,
-            'created_at'    => [
+            'date'    => [
                 'value'         => date_i18n('Y-m-d', strtotime($import_service['date_offset'])),
                 'compare'       => '>='
             ]
