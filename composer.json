@@ -29,8 +29,8 @@
         }
     ],
     "require": {
-        "php": "^8.1",
-        "yahnis-elsts/plugin-update-checker": "^4.13"
+        "php": "^8.4",
+        "yahnis-elsts/plugin-update-checker": "^5"
     },
     "require-dev": {
         "10up/wp_mock": "^0.4.2",

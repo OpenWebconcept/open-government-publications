@@ -9,7 +9,7 @@
  * Author URI: https://sudwestfryslan.nl/
  * Requires at least: 5.1
  * Tested up to: 6.9
- * Requires PHP: 8.1
+ * Requires PHP: 8.4
  */
 
 if (! defined('ABSPATH')) {

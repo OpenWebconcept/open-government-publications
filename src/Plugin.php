@@ -3,17 +3,17 @@
 namespace SudwestFryslan\OpenGovernmentPublications;
 
 use Throwable;
-use Puc_v4_Factory;
+use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 class Plugin
 {
     protected Container $container;
 
-    public function __construct(Container $container = null)
+    public function __construct(?Container $container = null)
     {
         $this->container = $container ?: new Container();
         // And this is where the magic happens ( ͡° ͜ʖ ͡°)
-        $this->container->set(Container::class, fn ($container) => $container);
+        $this->container->set(Container::class, fn($container) => $container);
 
         $config = array_merge(
             require dirname(__DIR__) . '/config/container.php',
@@ -75,13 +75,18 @@ class Plugin
     protected function checkForUpdate(): void
     {
         try {
-            $updater = Puc_v4_Factory::buildUpdateChecker(
+            $updater = PucFactory::buildUpdateChecker(
                 'https://github.com/OpenWebconcept/open-government-publications/',
                 $this->container->get('plugin.file'),
                 'open-government-publications'
             );
 
-            $updater->getVcsApi()->enableReleaseAssets();
+            $updater->setBranch('master');
+
+            $vcsApi = $updater->getVcsApi();
+            if ($vcsApi instanceof \YahnisElsts\PluginUpdateChecker\v5p6\Vcs\GitHubApi) {
+                $vcsApi->enableReleaseAssets();
+            }
         } catch (Throwable $e) {
             error_log($e->getMessage());
         }
