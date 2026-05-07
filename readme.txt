@@ -3,7 +3,7 @@ Contributors: Súdwest-Fryslân, sanderdekroon
 Tags: sudwestfryslan, officielebekendmakingen, government publications, owc
 Requires at least: 5.1
 Tested up to: 6.4
-Requires PHP: 7.4
+Requires PHP: 8.4
 Stable tag: 2.0.10
  
 Import and publish Government Publications through the REST API.
