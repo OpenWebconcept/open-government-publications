@@ -3,12 +3,12 @@
 /**
  * Plugin Name: Open Government Publications
  * Description: Import and publish Government Publications through the REST API.
- * Version: 2.0.9
+ * Version: 2.0.10
  * License: EUPL-1.2
  * Author: Súdwest-Fryslân
  * Author URI: https://sudwestfryslan.nl/
  * Requires at least: 5.1
- * Tested up to: 6.7
+ * Tested up to: 6.9
  * Requires PHP: 8.1
  */
 
