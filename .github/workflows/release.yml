@@ -11,12 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: php-actions/composer@v6
+      - uses: shivammathur/setup-php@v2
         with:
-          php_version: "8.4"
+          php-version: "8.4"
+          tools: composer:v2
       - uses: actions/setup-node@v3
         with:
-          node-version: 25
+          node-version: 22
           cache: 'npm'
       - run: npm install
       - run: ./package.sh
